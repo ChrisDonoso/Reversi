@@ -80,6 +80,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
@@ -120,23 +121,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="Content\Grid\Grid.grid" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoardUI.h" />
-    <ClInclude Include="Disks.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoardUI.cpp" />
-    <ClCompile Include="Disks.cpp" />
     <ClCompile Include="Reversi.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Content\Textures\Black.png" />
-    <Image Include="Content\Textures\White.png" />
+    <Image Include="content\Textures\BlackDisk.png" />
+    <Image Include="content\Textures\WhiteDisk.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

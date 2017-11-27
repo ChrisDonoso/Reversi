@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game.h"
+#include "Rectangle.h"
 
 namespace Library
 {
@@ -9,8 +10,6 @@ namespace Library
 
 namespace Board
 {
-	class Disks;
-
 	class BoardUI : public Library::Game
 	{
 	public:
@@ -27,9 +26,10 @@ namespace Board
 
 		static const DirectX::XMVECTORF32 BackgroundColor;
 
-
 		std::shared_ptr<Library::KeyboardComponent> mKeyboard;
-		std::shared_ptr<Disks> mDisks;
 
+		Library::Rectangle mSpriteBounds;
+
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
 	};
 }

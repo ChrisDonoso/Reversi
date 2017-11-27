@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Game.h"
 #include "DrawableGameComponent.h"
 #include "Game.h"
 #include "Rectangle.h"

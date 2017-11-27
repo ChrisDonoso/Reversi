@@ -28,7 +28,7 @@ namespace Board
 
 		//ISSUE ACQUIRING TEXTURE
 
-		wstring textureName = L"Content\\Textures\\White.png";
+		wstring textureName = L"Content\\Textures\\WhiteDisk.png";
 		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 

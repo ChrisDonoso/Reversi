@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "BoardUI.h"
-#include "Disks.h"
+
 
 using namespace std;
 using namespace DirectX;
@@ -12,21 +12,29 @@ namespace Board
 	const XMVECTORF32 BoardUI::BackgroundColor = Colors::BurlyWood;
 
 	BoardUI::BoardUI(function<void*()> getWindowCallback, function<void(SIZE&)> getRenderTargetSizeCallback) :
-		Game(getWindowCallback, getRenderTargetSizeCallback)
+		Game(getWindowCallback, getRenderTargetSizeCallback), mSpriteBounds(Rectangle::Empty)
 	{
 	}
 
 	void BoardUI::Initialize()
 	{
+		// Load a texture
+		ComPtr<ID3D11Resource> textureResource;
+		wstring textureName = L"Content\\Textures\\WhiteDisk.png";
+
+		ThrowIfFailed(CreateWICTextureFromFile(Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+
+		ComPtr<ID3D11Texture2D> texture;
+		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+
+
+
 		SpriteManager::Initialize(*this);
 		BlendStates::Initialize(mDirect3DDevice.Get());
 
 		mKeyboard = make_shared<KeyboardComponent>(*this);
 		mComponents.push_back(mKeyboard);
 		mServices.AddService(KeyboardComponent::TypeIdClass(), mKeyboard.get());
-
-		mDisks = make_shared<Disks>(*this);
-		mComponents.push_back(mDisks);
 
 		Game::Initialize();
 	}

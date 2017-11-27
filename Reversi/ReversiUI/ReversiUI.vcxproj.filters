@@ -9,31 +9,18 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Content">
-      <UniqueIdentifier>{eaea7aff-2574-44ed-8aad-4684ae645b90}</UniqueIdentifier>
+      <UniqueIdentifier>{e148d33b-075b-4e4d-a055-260acb02f4e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Content\Textures">
-      <UniqueIdentifier>{c03fc821-78b4-44c6-8492-2d8e603307d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Content\Grid">
-      <UniqueIdentifier>{b9df32f8-21fc-4396-b7df-a4ba918dd107}</UniqueIdentifier>
+      <UniqueIdentifier>{bc9aeeb8-5d48-4619-b59e-3462ee33e276}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Content\Grid\Grid.grid">
-      <Filter>Content\Grid</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Disks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BoardUI.h">
@@ -47,18 +34,15 @@
     <ClCompile Include="Reversi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Disks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoardUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Content\Textures\Black.png">
+    <Image Include="content\Textures\WhiteDisk.png">
       <Filter>Content\Textures</Filter>
     </Image>
-    <Image Include="Content\Textures\White.png">
+    <Image Include="content\Textures\BlackDisk.png">
       <Filter>Content\Textures</Filter>
     </Image>
   </ItemGroup>
