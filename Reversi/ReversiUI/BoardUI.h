@@ -27,6 +27,7 @@ namespace Board
 		static const DirectX::XMVECTORF32 BackgroundColor;
 
 		std::shared_ptr<Library::KeyboardComponent> mKeyboard;
+		std::shared_ptr<Library::MouseComponent> mMouse;
 
 		//Library::Rectangle mSpriteBounds;
 

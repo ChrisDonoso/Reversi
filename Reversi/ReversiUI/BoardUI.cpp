@@ -36,6 +36,10 @@ namespace Board
 		mComponents.push_back(mKeyboard);
 		mServices.AddService(KeyboardComponent::TypeIdClass(), mKeyboard.get());
 
+		mMouse = make_shared<MouseComponent>(*this, MouseModes::Absolute);
+		mComponents.push_back(mMouse);
+		mServices.AddService(MouseComponent::TypeIdClass(), mMouse.get());
+
 		ComPtr<ID3D11Resource> textureResource;
 		wstring textureName = L"Content\\Textures\\WhiteDisk.png";
 
@@ -69,6 +73,23 @@ namespace Board
 			Exit();
 		}
 
+		// Select start node
+		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
+		{
+			int xpos = mMouse->X() / 70 - 3; // Might need to change the 3
+			int ypos = mMouse->Y() / 70 - 1; // Might need to change the 1
+
+			if ((xpos >= 0 && xpos < 8) && (ypos >= 0 && ypos < 8))
+			{
+				/*if (mGraph.At(xpos, ypos)->Type() != NodeType::Wall)
+				{
+					mStartNode = mGraph.At(xpos, ypos);
+				}*/
+
+				// Check for valid move.
+			}
+		}
+
 		Game::Update(gameTime);
 	}
 
@@ -95,6 +116,8 @@ namespace Board
 			xpos = 605.0f;
 			ypos -= mBoundsTile.Height;
 		}
+
+		// RIGHT HERE IS WHERE WE DRAW THE CONTENTS OF THE BOARD
 
 		Game::Draw(gameTime);
 
