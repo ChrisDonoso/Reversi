@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BoardUI.h"
+#include "Board.h"
 
 
 using namespace std;
@@ -12,7 +13,7 @@ namespace Board
 	const XMVECTORF32 BoardUI::BackgroundColor = Colors::BurlyWood;
 
 	BoardUI::BoardUI(function<void*()> getWindowCallback, function<void(SIZE&)> getRenderTargetSizeCallback) :
-		Game(getWindowCallback, getRenderTargetSizeCallback), mBoundsWhite(Rectangle::Empty), mBoundsTile(Rectangle::Empty)
+		Game(getWindowCallback, getRenderTargetSizeCallback), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsTile(Rectangle::Empty)
 	{
 	}
 
@@ -40,8 +41,11 @@ namespace Board
 		mComponents.push_back(mMouse);
 		mServices.AddService(MouseComponent::TypeIdClass(), mMouse.get());
 
+		mBoard = make_shared<Board>(*this);
+		mComponents.push_back(mBoard);
+
 		ComPtr<ID3D11Resource> textureResource;
-		wstring textureName = L"Content\\Textures\\WhiteDisk.png";
+		wstring textureName = L"Content\\Textures\\whiteCoin.png";
 
 		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 
@@ -50,11 +54,17 @@ namespace Board
 
 		mBoundsWhite = TextureHelper::GetTextureBounds(texture.Get());
 
+		textureName = L"Content\\Textures\\blackCoin.png";
+		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+		mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
+
 		textureName = L"Content\\Textures\\Tile.png";
 		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mTileTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());
 
+		mBoard->Initialize();
 		Game::Initialize();
 	}
 
@@ -117,7 +127,15 @@ namespace Board
 			ypos -= mBoundsTile.Height;
 		}
 
+		mBoard->Draw(gameTime);
 		// RIGHT HERE IS WHERE WE DRAW THE CONTENTS OF THE BOARD
+		/*for (int row = 0; row < 8; row++)
+		{
+			for (int col = 0; col < 8; col++)
+			{
+				mBoard->Draw();
+			}
+		}*/
 
 		Game::Draw(gameTime);
 

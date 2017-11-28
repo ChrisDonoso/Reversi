@@ -54,5 +54,11 @@
     <Image Include="Content\Textures\Tile.png">
       <Filter>Content\Textures</Filter>
     </Image>
+    <Image Include="Content\Textures\blackCoin.png">
+      <Filter>Content\Textures</Filter>
+    </Image>
+    <Image Include="Content\Textures\whiteCoin.png">
+      <Filter>Content\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

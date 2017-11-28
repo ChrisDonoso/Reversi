@@ -10,6 +10,8 @@ namespace Library
 
 namespace Board
 {
+	class Board;
+
 	class BoardUI : public Library::Game
 	{
 	public:
@@ -28,11 +30,14 @@ namespace Board
 
 		std::shared_ptr<Library::KeyboardComponent> mKeyboard;
 		std::shared_ptr<Library::MouseComponent> mMouse;
+		std::shared_ptr<Board> mBoard;
 
 		//Library::Rectangle mSpriteBounds;
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
 		Library::Rectangle mBoundsWhite;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mBlackTexture;
+		Library::Rectangle mBoundsBlack;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mTileTexture;
 		Library::Rectangle mBoundsTile;
 
