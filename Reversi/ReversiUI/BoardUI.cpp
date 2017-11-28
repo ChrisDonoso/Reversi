@@ -12,7 +12,7 @@ namespace Board
 	const XMVECTORF32 BoardUI::BackgroundColor = Colors::BurlyWood;
 
 	BoardUI::BoardUI(function<void*()> getWindowCallback, function<void(SIZE&)> getRenderTargetSizeCallback) :
-		Game(getWindowCallback, getRenderTargetSizeCallback), mSpriteBounds(Rectangle::Empty)
+		Game(getWindowCallback, getRenderTargetSizeCallback), mBoundsWhite(Rectangle::Empty), mBoundsTile(Rectangle::Empty)
 	{
 	}
 
@@ -44,6 +44,13 @@ namespace Board
 		ComPtr<ID3D11Texture2D> texture;
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 
+		mBoundsWhite = TextureHelper::GetTextureBounds(texture.Get());
+
+		textureName = L"Content\\Textures\\Tile.png";
+		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mTileTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());
+
 		Game::Initialize();
 	}
 
@@ -69,6 +76,25 @@ namespace Board
 	{
 		mDirect3DDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&BackgroundColor));
 		mDirect3DDeviceContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		// Offsets for grid placement
+		float xpos = 605.0f;
+		float ypos = 510.0f;
+
+		// Draw the graph textures to the screen (Start node, End node, Normal nodes, and Wall nodes)
+		for (int row = 7; row >= 0; row--)
+		{
+			for (int col = 7; col >= 0; col--)
+			{
+				SpriteManager::DrawTexture2D(mTileTexture.Get(), XMFLOAT2(xpos, ypos));
+			
+				xpos -= mBoundsTile.Width;
+			}
+
+			// Reset offset for x position
+			xpos = 605.0f;
+			ypos -= mBoundsTile.Height;
+		}
 
 		Game::Draw(gameTime);
 

@@ -28,8 +28,12 @@ namespace Board
 
 		std::shared_ptr<Library::KeyboardComponent> mKeyboard;
 
-		Library::Rectangle mSpriteBounds;
+		//Library::Rectangle mSpriteBounds;
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
+		Library::Rectangle mBoundsWhite;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mTileTexture;
+		Library::Rectangle mBoundsTile;
+
 	};
 }
