@@ -45,16 +45,16 @@ namespace Board
 		mComponents.push_back(mBoard);
 
 		ComPtr<ID3D11Resource> textureResource;
-		wstring textureName = L"Content\\Textures\\whiteCoin.png";
+		wstring textureName = L"Content\\Textures\\Tile.png";
 
-		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mTileTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 
 		ComPtr<ID3D11Texture2D> texture;
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 
-		mBoundsWhite = TextureHelper::GetTextureBounds(texture.Get());
+		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());
 
-		textureName = L"Content\\Textures\\blackCoin.png";
+		/*textureName = L"Content\\Textures\\blackCoin.png";
 		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 		mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
@@ -62,7 +62,7 @@ namespace Board
 		textureName = L"Content\\Textures\\Tile.png";
 		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mTileTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
-		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());
+		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());*/
 
 		mBoard->Initialize();
 		Game::Initialize();
@@ -86,11 +86,17 @@ namespace Board
 		// Select start node
 		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
 		{
-			int xpos = mMouse->X() / 70 - 3; // Might need to change the 3
-			int ypos = mMouse->Y() / 70 - 1; // Might need to change the 1
+			int xpos = (mMouse->X() - 120) / 70; // Might need to change the 3
+			int ypos = (mMouse->Y() - 20) / 70; // Might need to change the 1
+			/*int xMouse = mMouse->X();
+			int yMouse = mMouse->Y();*/
 
 			if ((xpos >= 0 && xpos < 8) && (ypos >= 0 && ypos < 8))
 			{
+				if (mBoard->IsValidMove(xpos, ypos))
+				{
+					mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
+				}
 				/*if (mGraph.At(xpos, ypos)->Type() != NodeType::Wall)
 				{
 					mStartNode = mGraph.At(xpos, ypos);
@@ -109,7 +115,7 @@ namespace Board
 		mDirect3DDeviceContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 		// Offsets for grid placement
-		float xpos = 605.0f;
+		float xpos = 610.0f;
 		float ypos = 510.0f;
 
 		// Draw the graph textures to the screen (Start node, End node, Normal nodes, and Wall nodes)
@@ -123,7 +129,7 @@ namespace Board
 			}
 
 			// Reset offset for x position
-			xpos = 605.0f;
+			xpos = 610.0f;
 			ypos -= mBoundsTile.Height;
 		}
 

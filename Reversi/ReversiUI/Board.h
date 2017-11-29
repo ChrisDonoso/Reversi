@@ -19,8 +19,21 @@ namespace Board
 		virtual void Update(const Library::GameTime& gameTime) override;
 		virtual void Draw(const Library::GameTime& gameTime) override;
 
+		bool IsValidMove(int x, int y);
+		bool CheckForAdjacentPiece(int x, int y);
+		bool FlipPieces(int x, int y);
+		void UpdateScore();
+		bool GetWhitePlayerTurn();
+		void SetWhitePlayerTurn(bool flag);
+
+
 	private:
 		char mBoard[8][8];
+
+		int mWhiteScore;
+		int mBlackScore;
+
+		bool mWhitePlayerTurn;
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
 		Library::Rectangle mBoundsWhite;
