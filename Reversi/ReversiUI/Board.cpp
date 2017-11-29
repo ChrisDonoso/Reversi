@@ -62,8 +62,11 @@ namespace Board
 		UNREFERENCED_PARAMETER(gameTime);
 
 		// Offsets for grid placement
-		float xpos = 398.0f;// = //398.0f; // 605
-		float ypos = 511.0f; // 510
+		//float xpos = 398.0f;// = //398.0f; // 605
+		//float ypos = 511.0f; // 510
+
+		float xpos = 610.0f;
+		float ypos = 510.0f;
 
 		for (int row = 7; row >= 0; row--)
 		{
@@ -72,20 +75,18 @@ namespace Board
 				if (mBoard[row][col] == 'W')
 				{
 					SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
-
-					xpos -= mBoundsWhite.Width + 5.5f;
 				}
 				else if (mBoard[row][col] == 'B')
 				{
 					SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
-
-					xpos -= mBoundsBlack.Width + 5.5f;
 				}
+				
+				xpos -= mBoundsBlack.Width + 5.0f;
 			}
 
 			// Reset offset for x position
-			xpos = 398.0f; // 605
-			ypos -= mBoundsWhite.Height + 5.5f;
+			xpos = 610.0f; // 605
+			ypos -= mBoundsWhite.Height + 5.0f;
 		}
 	}
 
@@ -366,7 +367,7 @@ namespace Board
 			}
 		}
 
-		// Check horizontal
+		// Check vertical
 		if (mBoard[x][y - 1] == opponentPiece)
 		{
 			for (int j = y - 2; j >= 0; j--)
@@ -413,7 +414,7 @@ namespace Board
 			}
 		}
 
-		// Check vertical
+		// Check horizontal
 		if (mBoard[x - 1][y] == opponentPiece)
 		{
 			for (int i = x - 2; i >= 0; i--)
