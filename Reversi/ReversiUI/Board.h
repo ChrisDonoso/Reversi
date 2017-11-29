@@ -20,8 +20,10 @@ namespace Board
 		virtual void Draw(const Library::GameTime& gameTime) override;
 
 		bool IsValidMove(int x, int y);
+		void CheckForAvailableMoves();
 		bool CheckForAdjacentPiece(int x, int y);
-		bool FlipPieces(int x, int y);
+		//bool CheckForClosingPiece(int x, int y);
+		bool FlipPieces(int x, int y, bool flip);
 		void UpdateScore();
 		bool GetWhitePlayerTurn();
 		void SetWhitePlayerTurn(bool flag);
@@ -29,6 +31,7 @@ namespace Board
 
 	private:
 		char mBoard[8][8];
+		int mAvailableMoves[8][8];
 
 		int mWhiteScore;
 		int mBlackScore;
@@ -39,5 +42,7 @@ namespace Board
 		Library::Rectangle mBoundsWhite;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mBlackTexture;
 		Library::Rectangle mBoundsBlack;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mAvailableTexture;
+		Library::Rectangle mBoundsAvailable;
 	};
 }

@@ -65,7 +65,7 @@ namespace Board
 		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());*/
 
 		mBoard->Initialize();
-		//mBoard->SetWhitePlayerTurn(false);
+		//mBoard->SetWhitePlayerTurn(true);
 		Game::Initialize();
 	}
 
@@ -83,6 +83,8 @@ namespace Board
 		{
 			Exit();
 		}
+
+		mBoard->CheckForAvailableMoves();
 
 		// Select start node
 		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))

@@ -16,7 +16,7 @@ using namespace Microsoft::WRL;
 namespace Board
 {
 	Board::Board(Library::Game & game) :
-		DrawableGameComponent(game), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty)
+		DrawableGameComponent(game), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsAvailable(Rectangle::Empty)
 	{
 	}
 
@@ -50,6 +50,11 @@ namespace Board
 		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 		mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
+
+		textureName = L"Content\\Textures\\AvailableTile.png";
+		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mAvailableTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+		mBoundsAvailable = TextureHelper::GetTextureBounds(texture.Get());
 	}
 
 	void Board::Update(const Library::GameTime & gameTime)
@@ -75,10 +80,12 @@ namespace Board
 				if (mBoard[row][col] == 'W')
 				{
 					SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
+					//xpos -= mBoundsBlack.Width + 5.0f;
 				}
 				else if (mBoard[row][col] == 'B')
 				{
 					SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
+					//xpos -= mBoundsBlack.Width + 5.0f;
 				}
 				
 				xpos -= mBoundsBlack.Width + 5.0f;
@@ -87,6 +94,25 @@ namespace Board
 			// Reset offset for x position
 			xpos = 610.0f; // 605
 			ypos -= mBoundsWhite.Height + 5.0f;
+		}
+
+		ypos = 510.0f;
+
+		for (int row = 7; row >= 0; row--)
+		{
+			for (int col = 7; col >= 0; col--)
+			{
+				if (mAvailableMoves[row][col] && mBoard[row][col] == '-')
+				{
+					SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
+				}
+
+				xpos -= mBoundsAvailable.Width;
+			}
+
+			// Reset offset for x position
+			xpos = 610.0f;
+			ypos -= mBoundsAvailable.Height;
 		}
 	}
 
@@ -99,7 +125,7 @@ namespace Board
 
 		if (CheckForAdjacentPiece(x, y))
 		{
-			if (FlipPieces(x, y))
+			if (FlipPieces(x, y, true))
 			{
 				if (mWhitePlayerTurn)
 				{
@@ -124,6 +150,35 @@ namespace Board
 		}
 
 		return true;
+	}
+
+	void Board::CheckForAvailableMoves()
+	{
+		for (int row = 0; row < 8; row++)
+		{
+			for (int col = 0; col < 8; col++)
+			{
+				if (mBoard[row][col] == '-')
+				{
+					if (FlipPieces(row, col, false))
+					{
+						mAvailableMoves[row][col] = 1;
+					}
+					else
+					{
+						mAvailableMoves[row][col] = 0;
+					}
+					/*if (CheckForAdjacentPiece(row, col))
+					{
+						mAvailableMoves[row][col] = 1;
+					}
+					else
+					{
+						mAvailableMoves[row][col] = 0;
+					}*/
+				}
+			}
+		}
 	}
 
 	bool Board::CheckForAdjacentPiece(int x, int y)
@@ -214,7 +269,12 @@ namespace Board
 		return false;
 	}
 
-	bool Board::FlipPieces(int x, int y)
+	/*bool Board::CheckForClosingPiece(int x, int y)
+	{
+		return false;
+	}*/
+
+	bool Board::FlipPieces(int x, int y, bool flip)
 	{
 		char targetPiece;
 		char opponentPiece;
@@ -242,16 +302,19 @@ namespace Board
 				{
 					if (mBoard[j][i] == targetPiece)
 					{
-						i--;
-						j--;
-
-						while (mBoard[j][i] != targetPiece && (i > x && j > y))
+						if (flip)
 						{
-							mBoard[j][i] = targetPiece;
 							i--;
 							j--;
 
-							UpdateScore();
+							while (mBoard[j][i] != targetPiece && (i > x && j > y))
+							{
+								mBoard[j][i] = targetPiece;
+								i--;
+								j--;
+
+								UpdateScore();
+							}
 						}
 
 						closingPiece = true;
@@ -279,16 +342,19 @@ namespace Board
 				{
 					if (mBoard[j][i] == targetPiece)
 					{
-						i++;
-						j++;
-
-						while (mBoard[j][i] != targetPiece && (i < x && j < y))
+						if (flip)
 						{
-							mBoard[j][i] = targetPiece;
 							i++;
 							j++;
 
-							UpdateScore();
+							while (mBoard[j][i] != targetPiece && (i < x && j < y))
+							{
+								mBoard[j][i] = targetPiece;
+								i++;
+								j++;
+
+								UpdateScore();
+							}
 						}
 
 						closingPiece = true;
@@ -316,16 +382,19 @@ namespace Board
 				{
 					if (mBoard[i][j] == targetPiece)
 					{
-						i--;
-						j++;
-
-						while (mBoard[i][j] != targetPiece && (i > y && j < x))
+						if (flip)
 						{
-							mBoard[i][j] = targetPiece;
 							i--;
 							j++;
 
-							UpdateScore();
+							while (mBoard[i][j] != targetPiece && (i > y && j < x))
+							{
+								mBoard[i][j] = targetPiece;
+								i--;
+								j++;
+
+								UpdateScore();
+							}
 						}
 
 						closingPiece = true;
@@ -353,16 +422,19 @@ namespace Board
 				{
 					if (mBoard[i][j] == targetPiece)
 					{
-						i++;
-						j--;
-
-						while (mBoard[i][j] != targetPiece && (j > x && i < y))
+						if (flip)
 						{
-							mBoard[i][j] = targetPiece;
 							i++;
 							j--;
 
-							UpdateScore();
+							while (mBoard[i][j] != targetPiece && (j > x && i < y))
+							{
+								mBoard[i][j] = targetPiece;
+								i++;
+								j--;
+
+								UpdateScore();
+							}
 						}
 
 						closingPiece = true;
@@ -386,14 +458,17 @@ namespace Board
 			{
 				if (mBoard[y][j] == targetPiece)
 				{
-					j++;
-
-					while (mBoard[y][j] != targetPiece && j < x)
+					if (flip)
 					{
-						mBoard[y][j] = targetPiece;
 						j++;
 
-						UpdateScore();
+						while (mBoard[y][j] != targetPiece && j < x)
+						{
+							mBoard[y][j] = targetPiece;
+							j++;
+
+							UpdateScore();
+						}
 					}
 
 					closingPiece = true;
@@ -409,14 +484,17 @@ namespace Board
 			{
 				if (mBoard[y][j] == targetPiece)
 				{
-					j--;
-
-					while (mBoard[y][j] != targetPiece && j > x)
+					if (flip)
 					{
-						mBoard[y][j] = targetPiece;
 						j--;
 
-						UpdateScore();
+						while (mBoard[y][j] != targetPiece && j > x)
+						{
+							mBoard[y][j] = targetPiece;
+							j--;
+
+							UpdateScore();
+						}
 					}
 
 					closingPiece = true;
@@ -433,14 +511,17 @@ namespace Board
 			{
 				if (mBoard[i][x] == targetPiece)
 				{
-					i++;
-
-					while (mBoard[i][x] != targetPiece && i < y)
+					if (flip)
 					{
-						mBoard[i][x] = targetPiece;
 						i++;
 
-						UpdateScore();
+						while (mBoard[i][x] != targetPiece && i < y)
+						{
+							mBoard[i][x] = targetPiece;
+							i++;
+
+							UpdateScore();
+						}
 					}
 
 					closingPiece = true;
@@ -457,14 +538,17 @@ namespace Board
 			{
 				if (mBoard[i][x] == targetPiece)
 				{
-					i--;
-
-					while (mBoard[i][x] != targetPiece &&  i > y)
+					if (flip)
 					{
-						mBoard[i][x] = targetPiece;
 						i--;
 
-						UpdateScore();
+						while (mBoard[i][x] != targetPiece &&  i > y)
+						{
+							mBoard[i][x] = targetPiece;
+							i--;
+
+							UpdateScore();
+						}
 					}
 
 					closingPiece = true;
