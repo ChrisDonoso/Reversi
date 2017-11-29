@@ -65,6 +65,7 @@ namespace Board
 		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());*/
 
 		mBoard->Initialize();
+		//mBoard->SetWhitePlayerTurn(false);
 		Game::Initialize();
 	}
 

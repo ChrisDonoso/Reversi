@@ -103,12 +103,12 @@ namespace Board
 			{
 				if (mWhitePlayerTurn)
 				{
-					mBoard[x][y] = 'W';
+					mBoard[y][x] = 'W';
 					mWhiteScore++;
 				}
 				else
 				{
-					mBoard[x][y] = 'B';
+					mBoard[y][x] = 'B';
 					mBlackScore++;
 				}
 				// FlipPieces
@@ -141,7 +141,7 @@ namespace Board
 
 		if (y > 0)
 		{
-			if (mBoard[x][y - 1] == opponentPiece)
+			if (mBoard[y][x - 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -149,7 +149,7 @@ namespace Board
 
 		if (x > 0 && y > 0)
 		{
-			if (mBoard[x - 1][y - 1] == opponentPiece)
+			if (mBoard[y - 1][x - 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -157,7 +157,7 @@ namespace Board
 
 		if (x > 0)
 		{
-			if (mBoard[x - 1][y] == opponentPiece)
+			if (mBoard[y - 1][x] == opponentPiece)
 			{
 				return true;
 			}
@@ -165,7 +165,7 @@ namespace Board
 
 		if (x > 0 && y < 8)
 		{
-			if (mBoard[x - 1][y + 1] == opponentPiece)
+			if (mBoard[y - 1][x + 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -173,7 +173,7 @@ namespace Board
 
 		if (y < 8)
 		{
-			if (mBoard[x][y + 1] == opponentPiece)
+			if (mBoard[y][x + 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -181,7 +181,7 @@ namespace Board
 
 		if (x < 8 && y < 8)
 		{
-			if (mBoard[x + 1][y + 1] == opponentPiece)
+			if (mBoard[y + 1][x + 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -189,7 +189,7 @@ namespace Board
 
 		if (x < 8)
 		{
-			if (mBoard[x + 1][y] == opponentPiece)
+			if (mBoard[y + 1][x] == opponentPiece)
 			{
 				return true;
 			}
@@ -197,7 +197,7 @@ namespace Board
 
 		if (x > 0 && y < 8)
 		{
-			if (mBoard[x - 1][y + 1] == opponentPiece)
+			if (mBoard[y - 1][x + 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -225,7 +225,7 @@ namespace Board
 		}
 
 		// Check for diagonals
-		if (mBoard[x + 1][y + 1] == opponentPiece)
+		if (mBoard[y + 1][x + 1] == opponentPiece)
 		{
 			for (int i = x + 2; i < 8; i++)
 			{
@@ -261,7 +261,7 @@ namespace Board
 
 		pieceFound = false;
 
-		if (mBoard[x - 1][y - 1] == opponentPiece)
+		if (mBoard[y - 1][x - 1] == opponentPiece)
 		{
 			for (int i = x - 2; i >= 0; i--)
 			{
@@ -297,7 +297,7 @@ namespace Board
 
 		pieceFound = false;
 
-		if (mBoard[x + 1][y - 1] == opponentPiece)
+		if (mBoard[y + 1][x - 1] == opponentPiece)
 		{
 			for (int i = x + 2; i < 8; i++)
 			{
@@ -333,7 +333,7 @@ namespace Board
 
 		pieceFound = false;
 
-		if (mBoard[x - 1][y + 1] == opponentPiece)
+		if (mBoard[y - 1][x + 1] == opponentPiece)
 		{
 			for (int i = x - 2; i >= 0; i--)
 			{
@@ -367,8 +367,8 @@ namespace Board
 			}
 		}
 
-		// Check vertical
-		if (mBoard[x][y - 1] == opponentPiece)
+		// Check horizontal
+		if (mBoard[y][x - 1] == opponentPiece)
 		{
 			for (int j = y - 2; j >= 0; j--)
 			{
@@ -391,17 +391,17 @@ namespace Board
 			}
 		}
 
-		if (mBoard[x][y + 1] == opponentPiece)
+		if (mBoard[y][x + 1] == opponentPiece)
 		{
 			for (int j = y + 2; j < 8; j++)
 			{
-				if (mBoard[x][j] == targetPiece)
+				if (mBoard[j][x] == targetPiece)
 				{
 					j--;
 
-					while (mBoard[x][j] != targetPiece && j > y)
+					while (mBoard[j][x] != targetPiece && j > y)
 					{
-						mBoard[x][j] = targetPiece;
+						mBoard[j][x] = targetPiece;
 						j--;
 
 						UpdateScore();
@@ -414,18 +414,18 @@ namespace Board
 			}
 		}
 
-		// Check horizontal
-		if (mBoard[x - 1][y] == opponentPiece)
+		// Check vertical
+		if (mBoard[y - 1][x] == opponentPiece)
 		{
 			for (int i = x - 2; i >= 0; i--)
 			{
-				if (mBoard[i][y] == targetPiece)
+				if (mBoard[y][i] == targetPiece)
 				{
 					i++;
 
-					while (mBoard[i][y] != targetPiece && i < x)
+					while (mBoard[y][i] != targetPiece && i < x)
 					{
-						mBoard[i][y] = targetPiece;
+						mBoard[y][i] = targetPiece;
 						i++;
 
 						UpdateScore();
@@ -439,17 +439,17 @@ namespace Board
 		}
 
 
-		if (mBoard[x + 1][y] == opponentPiece)
+		if (mBoard[y + 1][x] == opponentPiece)
 		{
 			for (int i = x + 2; i < 8; i++)
 			{
-				if (mBoard[i][y] == targetPiece)
+				if (mBoard[y][i] == targetPiece)
 				{
 					i--;
 
-					while (mBoard[i][y] != targetPiece &&  i > x)
+					while (mBoard[y][i] != targetPiece &&  i > x)
 					{
-						mBoard[i][y] = targetPiece;
+						mBoard[y][i] = targetPiece;
 						i--;
 
 						UpdateScore();
