@@ -92,7 +92,7 @@ namespace Board
 
 	bool Board::IsValidMove(int x, int y)
 	{
-		if (mBoard[x][y] != '-')
+		if (mBoard[y][x] != '-')
 		{
 			return false;
 		}
@@ -139,6 +139,7 @@ namespace Board
 			opponentPiece = 'W';
 		}
 
+		// Checks for piece to the left
 		if (y > 0)
 		{
 			if (mBoard[y][x - 1] == opponentPiece)
@@ -147,6 +148,7 @@ namespace Board
 			}
 		}
 
+		// Checks for piece to the upper left
 		if (x > 0 && y > 0)
 		{
 			if (mBoard[y - 1][x - 1] == opponentPiece)
@@ -155,6 +157,7 @@ namespace Board
 			}
 		}
 
+		// Checks for piece above
 		if (x > 0)
 		{
 			if (mBoard[y - 1][x] == opponentPiece)
@@ -163,6 +166,7 @@ namespace Board
 			}
 		}
 
+		// Checks for piece to the upper right
 		if (x > 0 && y < 8)
 		{
 			if (mBoard[y - 1][x + 1] == opponentPiece)
@@ -171,6 +175,7 @@ namespace Board
 			}
 		}
 
+		// Checks for piece to the right
 		if (y < 8)
 		{
 			if (mBoard[y][x + 1] == opponentPiece)
@@ -179,6 +184,7 @@ namespace Board
 			}
 		}
 
+		// Checks for piece to the bottom right
 		if (x < 8 && y < 8)
 		{
 			if (mBoard[y + 1][x + 1] == opponentPiece)
@@ -187,6 +193,7 @@ namespace Board
 			}
 		}
 
+		// Checks for piece below
 		if (x < 8)
 		{
 			if (mBoard[y + 1][x] == opponentPiece)
@@ -195,9 +202,10 @@ namespace Board
 			}
 		}
 
+		// Checks for piece to the bottom left
 		if (x > 0 && y < 8)
 		{
-			if (mBoard[y - 1][x + 1] == opponentPiece)
+			if (mBoard[y + 1][x - 1] == opponentPiece)
 			{
 				return true;
 			}
@@ -225,20 +233,21 @@ namespace Board
 		}
 
 		// Check for diagonals
+		// Lower-Right Diagonal
 		if (mBoard[y + 1][x + 1] == opponentPiece)
 		{
 			for (int i = x + 2; i < 8; i++)
 			{
 				for (int j = y + 2; j < 8; j++)
 				{
-					if (mBoard[i][j] == targetPiece)
+					if (mBoard[j][i] == targetPiece)
 					{
 						i--;
 						j--;
 
-						while (mBoard[i][j] != targetPiece && (i > x && j > y))
+						while (mBoard[j][i] != targetPiece && (i > x && j > y))
 						{
-							mBoard[i][j] = targetPiece;
+							mBoard[j][i] = targetPiece;
 							i--;
 							j--;
 
@@ -261,20 +270,21 @@ namespace Board
 
 		pieceFound = false;
 
+		// Upper-Left Diagonal
 		if (mBoard[y - 1][x - 1] == opponentPiece)
 		{
 			for (int i = x - 2; i >= 0; i--)
 			{
 				for (int j = y - 2; j >= 0; j--)
 				{
-					if (mBoard[i][j] == targetPiece)
+					if (mBoard[j][i] == targetPiece)
 					{
 						i++;
 						j++;
 
-						while (mBoard[i][j] != targetPiece && (i < x && j < y))
+						while (mBoard[j][i] != targetPiece && (i < x && j < y))
 						{
-							mBoard[i][j] = targetPiece;
+							mBoard[j][i] = targetPiece;
 							i++;
 							j++;
 
@@ -297,20 +307,21 @@ namespace Board
 
 		pieceFound = false;
 
+		// Lower-Left Diagonal
 		if (mBoard[y + 1][x - 1] == opponentPiece)
 		{
 			for (int i = x + 2; i < 8; i++)
 			{
 				for (int j = y - 2; j >= 0; j--)
 				{
-					if (mBoard[i][j] == targetPiece)
+					if (mBoard[j][i] == targetPiece)
 					{
 						i--;
 						j++;
 
-						while (mBoard[i][j] != targetPiece && (i > x && j < y))
+						while (mBoard[j][i] != targetPiece && (i > x && j < y))
 						{
-							mBoard[i][j] = targetPiece;
+							mBoard[j][i] = targetPiece;
 							i--;
 							j++;
 
@@ -333,20 +344,21 @@ namespace Board
 
 		pieceFound = false;
 
+		// Upper-Right Diagonal
 		if (mBoard[y - 1][x + 1] == opponentPiece)
 		{
-			for (int i = x - 2; i >= 0; i--)
+			for (int i = y - 2; i >= 0; i--)
 			{
-				for (int j = y + 2; j < 8; j++)
+				for (int j = x + 2; j < 8; j++)
 				{
-					if (mBoard[i][j] == targetPiece)
+					if (mBoard[j][i] == targetPiece)
 					{
 						i++;
 						j--;
 
-						while (mBoard[i][j] != targetPiece && (i < x && j > y))
+						while (mBoard[j][i] != targetPiece && (i < x && j > y))
 						{
-							mBoard[i][j] = targetPiece;
+							mBoard[j][i] = targetPiece;
 							i++;
 							j--;
 
@@ -370,15 +382,15 @@ namespace Board
 		// Check horizontal
 		if (mBoard[y][x - 1] == opponentPiece)
 		{
-			for (int j = y - 2; j >= 0; j--)
+			for (int j = x - 2; j >= 0; j--)
 			{
-				if (mBoard[x][j] == targetPiece)
+				if (mBoard[y][j] == targetPiece)
 				{
 					j++;
 
-					while (mBoard[x][j] != targetPiece && j < y)
+					while (mBoard[y][j] != targetPiece && j < x)
 					{
-						mBoard[x][j] = targetPiece;
+						mBoard[y][j] = targetPiece;
 						j++;
 
 						UpdateScore();
@@ -393,15 +405,15 @@ namespace Board
 
 		if (mBoard[y][x + 1] == opponentPiece)
 		{
-			for (int j = y + 2; j < 8; j++)
+			for (int j = x + 2; j < 8; j++)
 			{
-				if (mBoard[j][x] == targetPiece)
+				if (mBoard[y][j] == targetPiece)
 				{
 					j--;
 
-					while (mBoard[j][x] != targetPiece && j > y)
+					while (mBoard[y][j] != targetPiece && j > x)
 					{
-						mBoard[j][x] = targetPiece;
+						mBoard[y][j] = targetPiece;
 						j--;
 
 						UpdateScore();
@@ -417,15 +429,15 @@ namespace Board
 		// Check vertical
 		if (mBoard[y - 1][x] == opponentPiece)
 		{
-			for (int i = x - 2; i >= 0; i--)
+			for (int i = y - 2; i >= 0; i--)
 			{
-				if (mBoard[y][i] == targetPiece)
+				if (mBoard[i][x] == targetPiece)
 				{
 					i++;
 
-					while (mBoard[y][i] != targetPiece && i < x)
+					while (mBoard[i][x] != targetPiece && i < y)
 					{
-						mBoard[y][i] = targetPiece;
+						mBoard[i][x] = targetPiece;
 						i++;
 
 						UpdateScore();
@@ -441,15 +453,15 @@ namespace Board
 
 		if (mBoard[y + 1][x] == opponentPiece)
 		{
-			for (int i = x + 2; i < 8; i++)
+			for (int i = y + 2; i < 8; i++)
 			{
-				if (mBoard[y][i] == targetPiece)
+				if (mBoard[i][x] == targetPiece)
 				{
 					i--;
 
-					while (mBoard[y][i] != targetPiece &&  i > x)
+					while (mBoard[i][x] != targetPiece &&  i > y)
 					{
-						mBoard[y][i] = targetPiece;
+						mBoard[i][x] = targetPiece;
 						i--;
 
 						UpdateScore();
