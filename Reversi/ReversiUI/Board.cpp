@@ -310,18 +310,18 @@ namespace Board
 		// Lower-Left Diagonal
 		if (mBoard[y + 1][x - 1] == opponentPiece)
 		{
-			for (int i = x + 2; i < 8; i++)
+			for (int i = x + 2; i >= 0; i--)
 			{
-				for (int j = y - 2; j >= 0; j--)
+				for (int j = y - 2; j < 8; j++)
 				{
-					if (mBoard[j][i] == targetPiece)
+					if (mBoard[i][j] == targetPiece)
 					{
 						i--;
 						j++;
 
-						while (mBoard[j][i] != targetPiece && (i > x && j < y))
+						while (mBoard[i][j] != targetPiece && (i > y && j < x))
 						{
-							mBoard[j][i] = targetPiece;
+							mBoard[i][j] = targetPiece;
 							i--;
 							j++;
 
@@ -347,18 +347,18 @@ namespace Board
 		// Upper-Right Diagonal
 		if (mBoard[y - 1][x + 1] == opponentPiece)
 		{
-			for (int i = y - 2; i >= 0; i--)
+			for (int i = y - 2; i < 8; i++)
 			{
-				for (int j = x + 2; j < 8; j++)
+				for (int j = x + 2; j >= 0; j--)
 				{
-					if (mBoard[j][i] == targetPiece)
+					if (mBoard[i][j] == targetPiece)
 					{
 						i++;
 						j--;
 
-						while (mBoard[j][i] != targetPiece && (i < x && j > y))
+						while (mBoard[i][j] != targetPiece && (j > x && i < y))
 						{
-							mBoard[j][i] = targetPiece;
+							mBoard[i][j] = targetPiece;
 							i++;
 							j--;
 
