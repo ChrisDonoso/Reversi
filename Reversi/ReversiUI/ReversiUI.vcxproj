@@ -153,9 +153,11 @@ xcopy /E /Y "$(ProjectDir)Content" "$(OutDir)Content"</Command>
   <ItemGroup>
     <Image Include="Content\Textures\AvailableTile.png" />
     <Image Include="Content\Textures\blackCoin.png" />
+    <Image Include="Content\Textures\blackCoin2.png" />
     <Image Include="content\Textures\BlackDisk.png" />
     <Image Include="Content\Textures\Tile.png" />
     <Image Include="Content\Textures\whiteCoin.png" />
+    <Image Include="Content\Textures\whiteCoin2.png" />
     <Image Include="content\Textures\WhiteDisk.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

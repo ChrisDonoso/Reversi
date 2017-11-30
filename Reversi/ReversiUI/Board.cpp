@@ -40,7 +40,7 @@ namespace Board
 		mBlackScore = 2;
 
 		ComPtr<ID3D11Resource> textureResource;
-		wstring textureName = L"Content\\Textures\\whiteCoin.png";
+		wstring textureName = L"Content\\Textures\\whiteCoin2.png";
 
 		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 
@@ -49,7 +49,7 @@ namespace Board
 
 		mBoundsWhite = TextureHelper::GetTextureBounds(texture.Get());
 
-		textureName = L"Content\\Textures\\blackCoin.png";
+		textureName = L"Content\\Textures\\blackCoin2.png";
 		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 		mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
@@ -599,6 +599,7 @@ namespace Board
 			}
 		} 
 
+		/// LOOK AT HORIZONTAL
 		// Check horizontal
 		if (mBoard[y][x - 1] == opponentPiece)
 		{
