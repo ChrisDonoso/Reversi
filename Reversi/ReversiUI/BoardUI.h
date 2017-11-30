@@ -28,9 +28,16 @@ namespace Board
 
 		static const DirectX::XMVECTORF32 BackgroundColor;
 
+		bool mWhiteCanMove;
+		bool mBlackCanMove;
+
 		std::shared_ptr<Library::KeyboardComponent> mKeyboard;
 		std::shared_ptr<Library::MouseComponent> mMouse;
 		std::shared_ptr<Board> mBoard;
+
+		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
+
+		Library::RenderStateHelper mRenderStateHelper;
 
 		//Library::Rectangle mSpriteBounds;
 

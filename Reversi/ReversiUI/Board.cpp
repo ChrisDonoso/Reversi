@@ -170,6 +170,8 @@ namespace Board
 
 	void Board::CheckForAvailableMoves()
 	{
+		mNumAvailableMoves = 0;
+
 		for (int row = 0; row < 8; row++)
 		{
 			for (int col = 0; col < 8; col++)
@@ -181,6 +183,7 @@ namespace Board
 						if (FlipPieces(row, col, false))
 						{
 							mAvailableMoves[col][row] = 1;
+							mNumAvailableMoves++;
 						}
 						else
 						{
@@ -198,6 +201,11 @@ namespace Board
 				}
 			}
 		}
+	}
+
+	int Board::NumberOfAvailableMoves()
+	{
+		return mNumAvailableMoves;
 	}
 
 	bool Board::CheckForAdjacentPiece(int x, int y)
@@ -742,6 +750,14 @@ namespace Board
 			mBlackScore++;
 			mWhiteScore--;
 		}
+	}
+	int Board::GetWhiteScore()
+	{
+		return mWhiteScore;
+	}
+	int Board::GetBlackScore()
+	{
+		return mBlackScore;
 	}
 	bool Board::GetWhitePlayerTurn()
 	{

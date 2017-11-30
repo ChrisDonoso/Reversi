@@ -13,7 +13,7 @@ namespace Board
 	const XMVECTORF32 BoardUI::BackgroundColor = Colors::BurlyWood;
 
 	BoardUI::BoardUI(function<void*()> getWindowCallback, function<void(SIZE&)> getRenderTargetSizeCallback) :
-		Game(getWindowCallback, getRenderTargetSizeCallback), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsTile(Rectangle::Empty)
+		Game(getWindowCallback, getRenderTargetSizeCallback), mRenderStateHelper(*this), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsTile(Rectangle::Empty)
 	{
 	}
 
@@ -44,6 +44,9 @@ namespace Board
 		mBoard = make_shared<Board>(*this);
 		mComponents.push_back(mBoard);
 
+		//mWhiteCanMove = true;
+		//mBlackCanMove = true;
+
 		ComPtr<ID3D11Resource> textureResource;
 		wstring textureName = L"Content\\Textures\\Tile.png";
 
@@ -53,6 +56,8 @@ namespace Board
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 
 		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());
+
+		mSpriteFont14 = make_unique<SpriteFont>(this->Direct3DDevice(), L"Content\\Fonts\\Arial_14_Regular.spritefont");
 
 		/*textureName = L"Content\\Textures\\blackCoin.png";
 		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
@@ -85,6 +90,36 @@ namespace Board
 		}
 
 		mBoard->CheckForAvailableMoves();
+
+		if (mBoard->NumberOfAvailableMoves() == 0)
+		{
+			if (mBoard->GetWhitePlayerTurn())
+			{
+				mWhiteCanMove = false;
+
+			}
+			else
+			{
+				mBlackCanMove = false;
+			}
+
+			if (mWhiteCanMove || mBlackCanMove)
+			{
+				mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
+			}
+		}
+		else
+		{
+			if (mBoard->GetWhitePlayerTurn())
+			{
+				mWhiteCanMove = true;
+
+			}
+			else
+			{
+				mBlackCanMove = true;
+			}
+		}
 
 		// Select start node
 		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
@@ -145,6 +180,28 @@ namespace Board
 				mBoard->Draw();
 			}
 		}*/
+
+		wostringstream gameOver;
+
+		if (!mWhiteCanMove && !mBlackCanMove)
+		{
+			if (mBoard->GetWhiteScore() > mBoard->GetBlackScore())
+			{
+				gameOver << L"Game Over. White wins!";
+			}
+			else if (mBoard->GetWhiteScore() < mBoard->GetBlackScore())
+			{
+				gameOver << L"Game Over. Black wins!";
+			}
+			else
+			{
+				gameOver << L"Game Over. It is a draw!";
+			}
+
+			mRenderStateHelper.SaveAll();
+			SpriteManager::DrawString(mSpriteFont14, gameOver.str().c_str(), XMFLOAT2(293, 0));
+			mRenderStateHelper.RestoreAll();
+		}
 
 		Game::Draw(gameTime);
 

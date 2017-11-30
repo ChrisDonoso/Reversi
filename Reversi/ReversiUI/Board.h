@@ -21,10 +21,13 @@ namespace Board
 
 		bool IsValidMove(int x, int y);
 		void CheckForAvailableMoves();
+		int NumberOfAvailableMoves();
 		bool CheckForAdjacentPiece(int x, int y);
 		//bool CheckForClosingPiece(int x, int y);
 		bool FlipPieces(int x, int y, bool flip);
 		void UpdateScore();
+		int GetWhiteScore();
+		int GetBlackScore();
 		bool GetWhitePlayerTurn();
 		void SetWhitePlayerTurn(bool flag);
 
@@ -35,6 +38,7 @@ namespace Board
 
 		int mWhiteScore;
 		int mBlackScore;
+		int mNumAvailableMoves;
 
 		bool mWhitePlayerTurn;
 
