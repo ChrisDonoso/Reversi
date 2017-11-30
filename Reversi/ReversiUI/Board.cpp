@@ -160,14 +160,17 @@ namespace Board
 			{
 				if (mBoard[row][col] == '-')
 				{
-					if (FlipPieces(row, col, false))
-					{
-						mAvailableMoves[row][col] = 1;
-					}
-					else
-					{
-						mAvailableMoves[row][col] = 0;
-					}
+					/*if (CheckForAdjacentPiece(row, col))
+					{*/
+						if (FlipPieces(row, col, false))
+						{
+							mAvailableMoves[row][col] = 1;
+						}
+						else
+						{
+							mAvailableMoves[row][col] = 0;
+						}
+					//}
 					/*if (CheckForAdjacentPiece(row, col))
 					{
 						mAvailableMoves[row][col] = 1;
@@ -280,6 +283,7 @@ namespace Board
 		char opponentPiece;
 		bool closingPiece = false;
 		bool pieceFound = false;
+		int k = 0;
 
 		if (mWhitePlayerTurn)
 		{
@@ -296,38 +300,65 @@ namespace Board
 		// Lower-Right Diagonal
 		if (mBoard[y + 1][x + 1] == opponentPiece)
 		{
+			k = y + 2;
+
 			for (int i = x + 2; i < 8; i++)
 			{
-				for (int j = y + 2; j < 8; j++)
+				if (mBoard[k][i] == targetPiece)
 				{
-					if (mBoard[j][i] == targetPiece)
+					i--;
+					k--;
+
+					if (flip)
 					{
-						if (flip)
+						while (mBoard[k][i] != targetPiece && (i > x && k > y))
 						{
+							mBoard[k][i] = targetPiece;
 							i--;
-							j--;
+							k--;
 
-							while (mBoard[j][i] != targetPiece && (i > x && j > y))
-							{
-								mBoard[j][i] = targetPiece;
-								i--;
-								j--;
-
-								UpdateScore();
-							}
+							UpdateScore();
 						}
-
-						closingPiece = true;
-						pieceFound = true;
-						break;
-						//return true;
 					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+					//return true;
 				}
+
+				//for (int j = y + 2; j < 8; j++)
+				//{
+				//	if (mBoard[j][i] == targetPiece)
+				//	{
+				//		i--;
+				//		j--;
+
+				//		if (flip)
+				//		{
+				//			while (mBoard[j][i] != targetPiece && (i > x && j > y))
+				//			{
+				//				mBoard[j][i] = targetPiece;
+				//				i--;
+				//				j--;
+
+				//				UpdateScore();
+				//			}
+				//		}
+
+				//		closingPiece = true;
+				//		pieceFound = true;
+				//		break;
+				//		//return true;
+				//	}
+				//}
 
 				if (pieceFound)
 				{
 					break;
 				}
+
+				k++;
 			}
 		}
 
@@ -336,38 +367,65 @@ namespace Board
 		// Upper-Left Diagonal
 		if (mBoard[y - 1][x - 1] == opponentPiece)
 		{
+			k = y - 2;
+
 			for (int i = x - 2; i >= 0; i--)
 			{
-				for (int j = y - 2; j >= 0; j--)
+				if (mBoard[k][i] == targetPiece)
 				{
-					if (mBoard[j][i] == targetPiece)
+					i++;
+					k++;
+
+					if (flip)
 					{
-						if (flip)
+						while (mBoard[k][i] != targetPiece && (i < x && k < y))
 						{
+							mBoard[k][i] = targetPiece;
 							i++;
-							j++;
+							k++;
 
-							while (mBoard[j][i] != targetPiece && (i < x && j < y))
-							{
-								mBoard[j][i] = targetPiece;
-								i++;
-								j++;
-
-								UpdateScore();
-							}
+							UpdateScore();
 						}
-
-						closingPiece = true;
-						pieceFound = true;
-						break;
-						//return true;
 					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+					//return true;
 				}
+
+				//for (int j = y - 2; j >= 0; j--)
+				//{
+				//	if (mBoard[j][i] == targetPiece)
+				//	{
+				//		i++;
+				//		j++;
+
+				//		if (flip)
+				//		{
+				//			while (mBoard[j][i] != targetPiece && (i < x && j < y))
+				//			{
+				//				mBoard[j][i] = targetPiece;
+				//				i++;
+				//				j++;
+
+				//				UpdateScore();
+				//			}
+				//		}
+
+				//		closingPiece = true;
+				//		pieceFound = true;
+				//		break;
+				//		//return true;
+				//	}
+				//}
 
 				if (pieceFound)
 				{
 					break;
 				}
+
+				k--;
 			}
 		}
 
@@ -376,38 +434,65 @@ namespace Board
 		// Lower-Left Diagonal
 		if (mBoard[y + 1][x - 1] == opponentPiece)
 		{
-			for (int i = x + 2; i >= 0; i--)
+			k = y - 2;
+
+			for (int i = x + 2; i < 8; i++)
 			{
-				for (int j = y - 2; j < 8; j++)
+				if (mBoard[i][k] == targetPiece)
 				{
-					if (mBoard[i][j] == targetPiece)
+					i--;
+					k++;
+
+					if (flip)
 					{
-						if (flip)
+						while (mBoard[i][k] != targetPiece && (i > y && k < x))
 						{
+							mBoard[i][k] = targetPiece;
 							i--;
-							j++;
+							k++;
 
-							while (mBoard[i][j] != targetPiece && (i > y && j < x))
-							{
-								mBoard[i][j] = targetPiece;
-								i--;
-								j++;
-
-								UpdateScore();
-							}
+							UpdateScore();
 						}
-
-						closingPiece = true;
-						pieceFound = true;
-						break;
-						//return true;
 					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+					//return true;
 				}
+
+				//for (int j = y - 2; j < 8; j++)
+				//{
+				//	if (mBoard[i][j] == targetPiece)
+				//	{
+				//		i--;
+				//		j++;
+
+				//		if (flip)
+				//		{
+				//			while (mBoard[i][j] != targetPiece && (i > y && j < x))
+				//			{
+				//				mBoard[i][j] = targetPiece;
+				//				i--;
+				//				j++;
+
+				//				UpdateScore();
+				//			}
+				//		}
+
+				//		closingPiece = true;
+				//		pieceFound = true;
+				//		break;
+				//		//return true;
+				//	}
+				//}
 
 				if (pieceFound)
 				{
 					break;
 				}
+
+				k--;
 			}
 		}
 
@@ -416,38 +501,65 @@ namespace Board
 		// Upper-Right Diagonal
 		if (mBoard[y - 1][x + 1] == opponentPiece)
 		{
-			for (int i = y - 2; i < 8; i++)
+			k = x + 2;
+
+			for (int i = y - 2; i >= 0; i--)
 			{
-				for (int j = x + 2; j >= 0; j--)
+				if (mBoard[i][k] == targetPiece)
 				{
-					if (mBoard[i][j] == targetPiece)
+					i++;
+					k--;
+
+					if (flip)
 					{
-						if (flip)
+						while (mBoard[i][k] != targetPiece && (k > x && i < y))
 						{
+							mBoard[i][k] = targetPiece;
 							i++;
-							j--;
+							k--;
 
-							while (mBoard[i][j] != targetPiece && (j > x && i < y))
-							{
-								mBoard[i][j] = targetPiece;
-								i++;
-								j--;
-
-								UpdateScore();
-							}
+							UpdateScore();
 						}
-
-						closingPiece = true;
-						pieceFound = true;
-						break;
-						//return true;
 					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+
+					//return true;
 				}
+				//for (int j = x + 2; j >= 0; j--)
+				//{
+				//	if (mBoard[i][j] == targetPiece)
+				//	{
+				//		i++;
+				//		j--;
+				//		if (flip)
+
+				//		{
+				//			while (mBoard[i][j] != targetPiece && (j > x && i < y))
+				//			{
+				//				mBoard[i][j] = targetPiece;
+				//				i++;
+				//				j--;
+
+				//				UpdateScore();
+				//			}
+				//		}
+
+				//		closingPiece = true;
+				//		pieceFound = true;
+				//		break;
+				//		//return true;
+				//	}
+				//}
 
 				if (pieceFound)
 				{
 					break;
 				}
+
+				k++;
 			}
 		}
 
@@ -458,10 +570,10 @@ namespace Board
 			{
 				if (mBoard[y][j] == targetPiece)
 				{
+					j++;
+
 					if (flip)
 					{
-						j++;
-
 						while (mBoard[y][j] != targetPiece && j < x)
 						{
 							mBoard[y][j] = targetPiece;
@@ -484,10 +596,10 @@ namespace Board
 			{
 				if (mBoard[y][j] == targetPiece)
 				{
+					j--;
+
 					if (flip)
 					{
-						j--;
-
 						while (mBoard[y][j] != targetPiece && j > x)
 						{
 							mBoard[y][j] = targetPiece;
@@ -511,10 +623,10 @@ namespace Board
 			{
 				if (mBoard[i][x] == targetPiece)
 				{
+					i++;
+
 					if (flip)
 					{
-						i++;
-
 						while (mBoard[i][x] != targetPiece && i < y)
 						{
 							mBoard[i][x] = targetPiece;
@@ -538,10 +650,10 @@ namespace Board
 			{
 				if (mBoard[i][x] == targetPiece)
 				{
+					i--;
+
 					if (flip)
 					{
-						i--;
-
 						while (mBoard[i][x] != targetPiece &&  i > y)
 						{
 							mBoard[i][x] = targetPiece;
