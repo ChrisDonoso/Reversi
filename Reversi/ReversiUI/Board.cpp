@@ -8,6 +8,7 @@ bool mWhitePlayer
 mWhiteScore
 mBlackScore
 */
+
 using namespace DirectX;
 using namespace Library;
 using namespace std;

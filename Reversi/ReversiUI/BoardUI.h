@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Rectangle.h"
+#include "Graph.h"
 
 namespace Library
 {
