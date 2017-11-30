@@ -84,7 +84,7 @@ namespace Board
 			Exit();
 		}
 
-		//mBoard->CheckForAvailableMoves();
+		mBoard->CheckForAvailableMoves();
 
 		// Select start node
 		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))

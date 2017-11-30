@@ -434,9 +434,9 @@ namespace Board
 		// Lower-Left Diagonal
 		if (mBoard[y + 1][x - 1] == opponentPiece)
 		{
-			k = y - 2;
+			k = x - 2;
 
-			for (int i = x + 2; i < 8; i++)
+			for (int i = y + 2; i < 8; i++)
 			{
 				if (mBoard[i][k] == targetPiece)
 				{
