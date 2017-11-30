@@ -16,7 +16,7 @@ using namespace Microsoft::WRL;
 namespace Board
 {
 	Board::Board(Library::Game & game) :
-		DrawableGameComponent(game), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsAvailable(Rectangle::Empty)
+		DrawableGameComponent(game), mRenderStateHelper(game), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsAvailable(Rectangle::Empty)
 	{
 	}
 
@@ -35,6 +35,9 @@ namespace Board
 
 		mBoard[3][4] = 'B';
 		mBoard[4][3] = 'B';
+
+		mWhiteScore = 2;
+		mBlackScore = 2;
 
 		ComPtr<ID3D11Resource> textureResource;
 		wstring textureName = L"Content\\Textures\\whiteCoin.png";
@@ -55,6 +58,8 @@ namespace Board
 		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mAvailableTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 		mBoundsAvailable = TextureHelper::GetTextureBounds(texture.Get());
+
+		mSpriteFont14 = make_unique<SpriteFont>(mGame->Direct3DDevice(), L"Content\\Fonts\\Arial_14_Regular.spritefont");
 	}
 
 	void Board::Update(const Library::GameTime & gameTime)
@@ -114,6 +119,17 @@ namespace Board
 			xpos = 610.0f;
 			ypos -= mBoundsAvailable.Height;
 		}
+
+		wostringstream whiteScore;
+		wostringstream blackScore;
+
+		whiteScore << "White: " << mWhiteScore;
+		blackScore << "Black: " << mBlackScore;
+
+		mRenderStateHelper.SaveAll();
+		SpriteManager::DrawString(mSpriteFont14, whiteScore.str().c_str(), XMFLOAT2(685, 20));
+		SpriteManager::DrawString(mSpriteFont14, blackScore.str().c_str(), XMFLOAT2(685, 45));
+		mRenderStateHelper.RestoreAll();
 	}
 
 	bool Board::IsValidMove(int x, int y)
@@ -158,19 +174,19 @@ namespace Board
 		{
 			for (int col = 0; col < 8; col++)
 			{
-				if (mBoard[row][col] == '-')
+				if (mBoard[col][row] == '-')
 				{
 					/*if (CheckForAdjacentPiece(row, col))
 					{*/
 						if (FlipPieces(row, col, false))
 						{
-							mAvailableMoves[row][col] = 1;
+							mAvailableMoves[col][row] = 1;
 						}
 						else
 						{
-							mAvailableMoves[row][col] = 0;
+							mAvailableMoves[col][row] = 0;
 						}
-					//}
+					//} 
 					/*if (CheckForAdjacentPiece(row, col))
 					{
 						mAvailableMoves[row][col] = 1;
@@ -304,6 +320,11 @@ namespace Board
 
 			for (int i = x + 2; i < 8; i++)
 			{
+				if (mBoard[k][i] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[k][i] == targetPiece)
 				{
 					i--;
@@ -371,6 +392,11 @@ namespace Board
 
 			for (int i = x - 2; i >= 0; i--)
 			{
+				if (mBoard[k][i] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[k][i] == targetPiece)
 				{
 					i++;
@@ -438,6 +464,11 @@ namespace Board
 
 			for (int i = y + 2; i < 8; i++)
 			{
+				if (mBoard[i][k] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[i][k] == targetPiece)
 				{
 					i--;
@@ -505,6 +536,11 @@ namespace Board
 
 			for (int i = y - 2; i >= 0; i--)
 			{
+				if (mBoard[i][k] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[i][k] == targetPiece)
 				{
 					i++;
@@ -561,13 +597,18 @@ namespace Board
 
 				k++;
 			}
-		}
+		} 
 
 		// Check horizontal
 		if (mBoard[y][x - 1] == opponentPiece)
 		{
 			for (int j = x - 2; j >= 0; j--)
 			{
+				if (mBoard[y][j] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[y][j] == targetPiece)
 				{
 					j++;
@@ -594,6 +635,11 @@ namespace Board
 		{
 			for (int j = x + 2; j < 8; j++)
 			{
+				if (mBoard[y][j] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[y][j] == targetPiece)
 				{
 					j--;
@@ -621,6 +667,11 @@ namespace Board
 		{
 			for (int i = y - 2; i >= 0; i--)
 			{
+				if (mBoard[i][x] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[i][x] == targetPiece)
 				{
 					i++;
@@ -643,11 +694,15 @@ namespace Board
 			}
 		}
 
-
 		if (mBoard[y + 1][x] == opponentPiece)
 		{
 			for (int i = y + 2; i < 8; i++)
 			{
+				if (mBoard[i][x] == '-')
+				{
+					break;
+				}
+
 				if (mBoard[i][x] == targetPiece)
 				{
 					i--;

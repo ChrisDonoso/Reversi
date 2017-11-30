@@ -38,6 +38,10 @@ namespace Board
 
 		bool mWhitePlayerTurn;
 
+		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
+
+		Library::RenderStateHelper mRenderStateHelper;
+
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
 		Library::Rectangle mBoundsWhite;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mBlackTexture;

@@ -15,6 +15,9 @@
     <Filter Include="Content\Textures">
       <UniqueIdentifier>{bc9aeeb8-5d48-4619-b59e-3462ee33e276}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Fonts">
+      <UniqueIdentifier>{e2b155cf-0140-4e09-a31e-ba1db8e4f3c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
