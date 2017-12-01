@@ -68,6 +68,18 @@ namespace Board
 		// TODO: insert return statement here
 	}
 
+	std::vector<std::weak_ptr<NodeReversi>>& NodeReversi::Children()
+	{
+		// TODO: insert return statement here
+		return mChildren;
+	}
+
+	const std::vector<std::weak_ptr<NodeReversi>>& NodeReversi::Children() const
+	{
+		// TODO: insert return statement here
+		return mChildren;
+	}
+
 	std::weak_ptr<NodeReversi> NodeReversi::Parent()
 	{
 		return mParent;

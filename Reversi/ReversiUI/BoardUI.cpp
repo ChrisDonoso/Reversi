@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "BoardUI.h"
 #include "Board.h"
-
+#include "Point.h"
 
 using namespace std;
 using namespace DirectX;
@@ -84,12 +84,14 @@ namespace Board
 
 	void BoardUI::Update(const GameTime &gameTime)
 	{
+		mBoard->SetDraw(true);
+
 		if (mKeyboard->WasKeyPressedThisFrame(Keys::Escape))
 		{
 			Exit();
 		}
 
-		mBoard->CheckForAvailableMoves();
+		//mBoard->CheckForAvailableMoves();
 
 		/*if (mBoard->NumberOfAvailableMoves() == 0)
 		{
@@ -122,26 +124,68 @@ namespace Board
 		}*/
 
 		// Select start node
-		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
+
+		mBoard->CheckForAvailableMoves();
+		
+		if (mBoard->GetWhitePlayerTurn())
 		{
-			int xpos = (mMouse->X() - 120) / 70; // Might need to change the 3
-			int ypos = (mMouse->Y() - 20) / 70; // Might need to change the 1
-			/*int xMouse = mMouse->X();
-			int yMouse = mMouse->Y();*/
+			//mBoard->CheckForAvailableMoves();
 
-			if ((xpos >= 0 && xpos < 8) && (ypos >= 0 && ypos < 8))
+			if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
 			{
-				if (mBoard->IsValidMove(xpos, ypos))
-				{
-					mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
-				}
-				/*if (mGraph.At(xpos, ypos)->Type() != NodeType::Wall)
-				{
-					mStartNode = mGraph.At(xpos, ypos);
-				}*/
+				int xpos = (mMouse->X() - 120) / 70; // Might need to change the 3
+				int ypos = (mMouse->Y() - 20) / 70; // Might need to change the 1
+													/*int xMouse = mMouse->X();
+													int yMouse = mMouse->Y();*/
 
-				// Check for valid move.
+				if ((xpos >= 0 && xpos < 8) && (ypos >= 0 && ypos < 8))
+				{
+					if (mBoard->IsValidMove(xpos, ypos))
+					{
+						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
+						mBoard->SetWhitePlayerTurn(false);
+
+						//mBoard->CheckForAvailableMoves();
+					}
+					/*if (mGraph.At(xpos, ypos)->Type() != NodeType::Wall)
+					{
+					mStartNode = mGraph.At(xpos, ypos);
+					}*/
+
+					// Check for valid move.
+				}
 			}
+		}
+		else
+		{
+			/*for (auto& move : mBoard->GetMoves())
+			{
+				int x = move.X;
+				int y = move.Y;
+
+				UNREFERENCED_PARAMETER(x);
+				UNREFERENCED_PARAMETER(y);
+			}*/
+
+			mBoard->CheckForAvailableMoves();
+
+			clock_t timer = clock();
+
+			while (clock() - timer < TWO_SECONDS)
+			{
+
+			}
+			/*if (clock() - timer >= THREE_SECONDS)
+			{*/
+
+			std::weak_ptr<Board> board = mBoard;
+
+			std::pair<int, int> move = GetBestMove(board, false, 1);
+			
+			mBoard->FlipPieces(move.first, move.second, true);
+
+			mBoard->SetWhitePlayerTurn(true);
+			//}
 		}
 
 		Game::Update(gameTime);
@@ -218,9 +262,98 @@ namespace Board
 		}
 	}
 
+	Library::Point BoardUI::test()
+	{
+		return Library::Point();
+	}
+
 	void BoardUI::Exit()
 	{
 		PostQuitMessage(0);
 	}
 
+	// Driver for MiniMax function
+	std::pair<int, int> BoardUI::GetBestMove(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth)
+	{
+		AIMove move = MiniMax(board, whitePlayer, maxDepth, 0);
+
+		return std::pair<int, int>(move.x, move.y);
+	}
+
+	AIMove BoardUI::MiniMax(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth)
+	{
+		AIMove move;
+
+		// Initialize AIMove struct for move
+		move.x = -1;
+		move.y = -1;
+		move.score = -1;
+
+		AIMove bestMove;
+
+		// Initialize AIMove struct for bestMove
+		bestMove.x = -1;
+		bestMove.y = -1;
+		bestMove.score = -1;
+
+		//std::shared_ptr<Board> boardtemp = board;// .lock();
+
+		if (board.lock()->IsGameOver() || currentDepth == maxDepth)
+		{
+			if (whitePlayer)
+			{
+				move.score = board.lock()->GetWhiteScore();
+			}
+			else
+			{
+				move.score = board.lock()->GetBlackScore();
+			}
+
+			std::pair<int, int> lastMoveMade = board.lock()->GetLastMoveMade();
+			move.x = lastMoveMade.first;
+			move.y = lastMoveMade.second;
+
+			return move;
+		}
+
+		if (board.lock()->GetWhitePlayerTurn() == whitePlayer)
+		{
+			bestMove.score = -INFINITY2;
+		}
+		else
+		{
+			bestMove.score = INFINITY2;
+		}
+
+		// Go through each move
+		for (auto& availableMove : board.lock()->GetMoves())
+		{
+			std::weak_ptr<Board> newBoard = board;
+
+			newBoard.lock()->SetDraw(false);
+			newBoard.lock()->Evaluate(availableMove.X, availableMove.Y);
+			//newBoard.lock()->FlipPieces(availableMove.X, availableMove.Y, true);
+
+			move = MiniMax(newBoard.lock(), !whitePlayer, maxDepth, currentDepth + 1);
+
+			// Update the best score
+			if (board.lock()->GetWhitePlayerTurn() == whitePlayer)
+			{
+				if (move.score > bestMove.score)
+				{
+					bestMove = move;
+				}
+			}
+			else
+			{
+				if (move.score < bestMove.score)
+				{
+					bestMove = move;
+				}
+			}
+		}
+
+		//return AIMove();
+		return bestMove;
+	}
 }

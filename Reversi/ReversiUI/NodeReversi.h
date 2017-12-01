@@ -35,6 +35,9 @@ namespace Board
 		std::vector<std::weak_ptr<NodeReversi>>& Neighbors();
 		const std::vector<std::weak_ptr<NodeReversi>>& Neighbors() const;
 
+		std::vector<std::weak_ptr<NodeReversi>>& Children();
+		const std::vector<std::weak_ptr<NodeReversi>>& Children() const;
+
 		std::weak_ptr<NodeReversi> Parent(); // const;
 		void SetParent(std::shared_ptr<NodeReversi> parent);
 
@@ -51,6 +54,7 @@ namespace Board
 
 		//Node *mNext;
 		std::vector<std::weak_ptr<NodeReversi>> mNeighbors;
+		std::vector<std::weak_ptr<NodeReversi>> mChildren;
 		std::weak_ptr<NodeReversi> mParent;
 
 	};

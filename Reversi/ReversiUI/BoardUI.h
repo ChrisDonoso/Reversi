@@ -3,10 +3,21 @@
 #include "Game.h"
 #include "Rectangle.h"
 #include "Graph.h"
+#include <limits.h>
+
+#define INFINITY2 INT_MAX;
+#define TWO_SECONDS 2000
+
+struct AIMove {
+	int x;
+	int y;
+	int score;
+};
 
 namespace Library
 {
 	class KeyboardComponent;
+	//class Point;
 }
 
 namespace Board
@@ -23,9 +34,13 @@ namespace Board
 		virtual void Update(const Library::GameTime& gameTime) override;
 		virtual void Draw(const Library::GameTime& gameTime) override;
 
+		Library::Point test();
 
 	private:
 		void Exit();
+		std::pair<int, int> GetBestMove(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth);
+		//Point GetBestMove();
+		AIMove MiniMax(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth);
 
 		static const DirectX::XMVECTORF32 BackgroundColor;
 

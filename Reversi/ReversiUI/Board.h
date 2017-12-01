@@ -30,13 +30,16 @@ namespace Board
 		bool CheckForAdjacentPiece(int x, int y);
 		//bool CheckForClosingPiece(int x, int y);
 		bool FlipPieces(int x, int y, bool flip);
+		void Evaluate(int x, int y);
 		void UpdateScore();
 		int GetWhiteScore();
 		int GetBlackScore();
 		bool GetWhitePlayerTurn();
 		void SetWhitePlayerTurn(bool flag);
 		bool IsGameOver();
-
+		void SetDraw(bool flag);
+		void SetLastMoveMade(int x, int y);
+		std::pair<int, int> GetLastMoveMade();
 
 	private:
 		char mBoard[8][8];
@@ -50,8 +53,11 @@ namespace Board
 		bool mWhiteCanMove;
 		bool mBlackCanMove;
 		bool mGameOver;
+		bool mDraw;
 
 		std::list<Library::Point> mMoves;
+
+		std::pair<int, int> mLastMoveMade;
 
 		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
 

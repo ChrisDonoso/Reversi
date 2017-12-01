@@ -31,11 +31,11 @@ namespace Board
 			}
 		}
 
-		mBoard[3][3] = 'W';
-		mBoard[4][4] = 'W';
+		mBoard[3][3] = 'B';
+		mBoard[4][4] = 'B';
 
-		mBoard[3][4] = 'B';
-		mBoard[4][3] = 'B';
+		mBoard[3][4] = 'W';
+		mBoard[4][3] = 'W';
 
 		mWhiteScore = 2;
 		mBlackScore = 2;
@@ -116,61 +116,64 @@ namespace Board
 		//float xpos = 398.0f;// = //398.0f; // 605
 		//float ypos = 511.0f; // 510
 
-		float xpos = 610.0f;
-		float ypos = 510.0f;
-
-		for (int row = 7; row >= 0; row--)
+		if (mDraw)
 		{
-			for (int col = 7; col >= 0; col--)
+			float xpos = 610.0f;
+			float ypos = 510.0f;
+
+			for (int row = 7; row >= 0; row--)
 			{
-				if (mBoard[row][col] == 'W')
+				for (int col = 7; col >= 0; col--)
 				{
-					SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
-					//xpos -= mBoundsBlack.Width + 5.0f;
+					if (mBoard[row][col] == 'W')
+					{
+						SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
+						//xpos -= mBoundsBlack.Width + 5.0f;
+					}
+					else if (mBoard[row][col] == 'B')
+					{
+						SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
+						//xpos -= mBoundsBlack.Width + 5.0f;
+					}
+
+					xpos -= mBoundsBlack.Width + 5.0f;
 				}
-				else if (mBoard[row][col] == 'B')
-				{
-					SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
-					//xpos -= mBoundsBlack.Width + 5.0f;
-				}
-				
-				xpos -= mBoundsBlack.Width + 5.0f;
+
+				// Reset offset for x position
+				xpos = 610.0f; // 605
+				ypos -= mBoundsWhite.Height + 5.0f;
 			}
 
-			// Reset offset for x position
-			xpos = 610.0f; // 605
-			ypos -= mBoundsWhite.Height + 5.0f;
-		}
+			ypos = 510.0f;
 
-		ypos = 510.0f;
-
-		for (int row = 7; row >= 0; row--)
-		{
-			for (int col = 7; col >= 0; col--)
+			for (int row = 7; row >= 0; row--)
 			{
-				if (mAvailableMoves[row][col] && mBoard[row][col] == '-')
+				for (int col = 7; col >= 0; col--)
 				{
-					SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
+					if (mAvailableMoves[row][col] && mBoard[row][col] == '-')
+					{
+						SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
+					}
+
+					xpos -= mBoundsAvailable.Width;
 				}
 
-				xpos -= mBoundsAvailable.Width;
+				// Reset offset for x position
+				xpos = 610.0f;
+				ypos -= mBoundsAvailable.Height;
 			}
 
-			// Reset offset for x position
-			xpos = 610.0f;
-			ypos -= mBoundsAvailable.Height;
+			wostringstream whiteScore;
+			wostringstream blackScore;
+
+			whiteScore << "White: " << mWhiteScore;
+			blackScore << "Black: " << mBlackScore;
+
+			mRenderStateHelper.SaveAll();
+			SpriteManager::DrawString(mSpriteFont14, whiteScore.str().c_str(), XMFLOAT2(685, 20));
+			SpriteManager::DrawString(mSpriteFont14, blackScore.str().c_str(), XMFLOAT2(685, 45));
+			mRenderStateHelper.RestoreAll();
 		}
-
-		wostringstream whiteScore;
-		wostringstream blackScore;
-
-		whiteScore << "White: " << mWhiteScore;
-		blackScore << "Black: " << mBlackScore;
-
-		mRenderStateHelper.SaveAll();
-		SpriteManager::DrawString(mSpriteFont14, whiteScore.str().c_str(), XMFLOAT2(685, 20));
-		SpriteManager::DrawString(mSpriteFont14, blackScore.str().c_str(), XMFLOAT2(685, 45));
-		mRenderStateHelper.RestoreAll();
 	}
 
 	bool Board::IsValidMove(int x, int y)
@@ -187,12 +190,12 @@ namespace Board
 				if (mWhitePlayerTurn)
 				{
 					mBoard[y][x] = 'W';
-					mWhiteScore++;
+					//mWhiteScore++;
 				}
 				else
 				{
 					mBoard[y][x] = 'B';
-					mBlackScore++;
+					//mBlackScore++;
 				}
 				// FlipPieces
 			}
@@ -213,7 +216,7 @@ namespace Board
 	{
 		mNumAvailableMoves = 0;
 
-		mMoves.empty();
+		mMoves.clear();
 
 		for (int row = 0; row < 8; row++)
 		{
@@ -783,8 +786,335 @@ namespace Board
 			}
 		}
 
+		if (closingPiece && flip)
+		{
+			SetLastMoveMade(x, y);
+
+			if (mWhitePlayerTurn)
+			{
+				mWhiteScore++;
+			}
+			else
+			{
+				mBlackScore++;
+			}
+		}
+
 		//return false;
 		return closingPiece;
+	}
+
+	void Board::Evaluate(int x, int y)
+	{
+		char targetPiece;
+		char opponentPiece;
+		bool closingPiece = false;
+		bool pieceFound = false;
+		int k = 0;
+
+		if (mWhitePlayerTurn)
+		{
+			targetPiece = 'W';
+			opponentPiece = 'B';
+		}
+		else
+		{
+			targetPiece = 'B';
+			opponentPiece = 'W';
+		}
+
+		// Check for diagonals
+		// Lower-Right Diagonal
+		if (mBoard[y + 1][x + 1] == opponentPiece)
+		{
+			k = y + 2;
+
+			for (int i = x + 2; i < 8; i++)
+			{
+				if (mBoard[k][i] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[k][i] == targetPiece)
+				{
+					i--;
+					k--;
+
+					while (mBoard[k][i] != targetPiece && (i > x && k > y))
+					{
+						i--;
+						k--;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+					//return true;
+				}
+
+				if (pieceFound)
+				{
+					break;
+				}
+
+				k++;
+			}
+		}
+
+		pieceFound = false;
+
+		// Upper-Left Diagonal
+		if (mBoard[y - 1][x - 1] == opponentPiece)
+		{
+			k = y - 2;
+
+			for (int i = x - 2; i >= 0; i--)
+			{
+				if (mBoard[k][i] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[k][i] == targetPiece)
+				{
+					i++;
+					k++;
+
+					while (mBoard[k][i] != targetPiece && (i < x && k < y))
+					{
+						i++;
+						k++;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+					//return true;
+				}
+
+				if (pieceFound)
+				{
+					break;
+				}
+
+				k--;
+			}
+		}
+
+		pieceFound = false;
+
+		// Lower-Left Diagonal
+		if (mBoard[y + 1][x - 1] == opponentPiece)
+		{
+			k = x - 2;
+
+			for (int i = y + 2; i < 8; i++)
+			{
+				if (mBoard[i][k] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[i][k] == targetPiece)
+				{
+					i--;
+					k++;
+
+					while (mBoard[i][k] != targetPiece && (i > y && k < x))
+					{
+						i--;
+						k++;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+					//return true;
+				}
+
+				if (pieceFound)
+				{
+					break;
+				}
+
+				k--;
+			}
+		}
+
+		pieceFound = false;
+
+		// Upper-Right Diagonal
+		if (mBoard[y - 1][x + 1] == opponentPiece)
+		{
+			k = x + 2;
+
+			for (int i = y - 2; i >= 0; i--)
+			{
+				if (mBoard[i][k] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[i][k] == targetPiece)
+				{
+					i++;
+					k--;
+
+					while (mBoard[i][k] != targetPiece && (k > x && i < y))
+					{
+						i++;
+						k--;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					pieceFound = true;
+					break;
+
+					//return true;
+				}
+
+				if (pieceFound)
+				{
+					break;
+				}
+
+				k++;
+			}
+		}
+
+		/// LOOK AT HORIZONTAL
+		// Check horizontal
+		if (mBoard[y][x - 1] == opponentPiece)
+		{
+			for (int j = x - 2; j >= 0; j--)
+			{
+				if (mBoard[y][j] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[y][j] == targetPiece)
+				{
+					j++;
+
+					while (mBoard[y][j] != targetPiece && j < x)
+					{
+						j++;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					break;
+					//return true;
+				}
+			}
+		}
+
+		if (mBoard[y][x + 1] == opponentPiece)
+		{
+			for (int j = x + 2; j < 8; j++)
+			{
+				if (mBoard[y][j] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[y][j] == targetPiece)
+				{
+					j--;
+
+					while (mBoard[y][j] != targetPiece && j > x)
+					{
+						j--;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					break;
+					//return true;
+				}
+			}
+		}
+
+		// Check vertical
+		if (mBoard[y - 1][x] == opponentPiece)
+		{
+			for (int i = y - 2; i >= 0; i--)
+			{
+				if (mBoard[i][x] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[i][x] == targetPiece)
+				{
+					i++;
+
+					while (mBoard[i][x] != targetPiece && i < y)
+					{
+						i++;
+
+						UpdateScore();
+					}
+
+					closingPiece = true;
+					break;
+					//return true;
+				}
+			}
+		}
+
+		if (mBoard[y + 1][x] == opponentPiece)
+		{
+			for (int i = y + 2; i < 8; i++)
+			{
+				if (mBoard[i][x] == '-')
+				{
+					break;
+				}
+
+				if (mBoard[i][x] == targetPiece)
+				{
+					i--;
+
+					while (mBoard[i][x] != targetPiece &&  i > y)
+					{
+						i--;
+
+						UpdateScore();
+					}
+				
+					closingPiece = true;
+					break;
+					//return true;
+				}
+			}
+		}
+
+		if (closingPiece)
+		{
+			SetLastMoveMade(x, y);
+
+			if (mWhitePlayerTurn)
+			{
+				mWhiteScore++;
+			}
+			else
+			{
+				mBlackScore++;
+			}
+		}
 	}
 
 	void Board::UpdateScore()
@@ -800,14 +1130,17 @@ namespace Board
 			mWhiteScore--;
 		}
 	}
+
 	int Board::GetWhiteScore()
 	{
 		return mWhiteScore;
 	}
+
 	int Board::GetBlackScore()
 	{
 		return mBlackScore;
 	}
+
 	bool Board::GetWhitePlayerTurn()
 	{
 		return mWhitePlayerTurn;
@@ -817,8 +1150,25 @@ namespace Board
 	{
 		mWhitePlayerTurn = flag;
 	}
+
 	bool Board::IsGameOver()
 	{
 		return mGameOver;
+	}
+
+	void Board::SetDraw(bool flag)
+	{
+		mDraw = flag;
+	}
+
+	void Board::SetLastMoveMade(int x, int y)
+	{
+		mLastMoveMade.first = x;
+		mLastMoveMade.second = y;
+	}
+
+	std::pair<int, int> Board::GetLastMoveMade()
+	{
+		return mLastMoveMade;
 	}
 }
