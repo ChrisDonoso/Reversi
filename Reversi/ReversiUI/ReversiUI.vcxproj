@@ -145,13 +145,15 @@ xcopy /E /Y "$(ProjectDir)Content" "$(OutDir)Content"</Command>
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardUI.h" />
-    <ClInclude Include="Node.h" />
+    <ClInclude Include="GraphReversi.h" />
+    <ClInclude Include="NodeReversi.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardUI.cpp" />
-    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="GraphReversi.cpp" />
+    <ClCompile Include="NodeReversi.cpp" />
     <ClCompile Include="Reversi.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

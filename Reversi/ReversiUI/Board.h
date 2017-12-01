@@ -8,6 +8,10 @@ mWhiteScore
 mBlackScore
 */
 
+#include <list>
+#include <Point.h>
+//#include <memory>
+
 namespace Board
 {
 	class Board final : public Library::DrawableGameComponent
@@ -21,6 +25,7 @@ namespace Board
 
 		bool IsValidMove(int x, int y);
 		void CheckForAvailableMoves();
+		std::list<Library::Point> GetMoves();
 		int NumberOfAvailableMoves();
 		bool CheckForAdjacentPiece(int x, int y);
 		//bool CheckForClosingPiece(int x, int y);
@@ -30,6 +35,7 @@ namespace Board
 		int GetBlackScore();
 		bool GetWhitePlayerTurn();
 		void SetWhitePlayerTurn(bool flag);
+		bool IsGameOver();
 
 
 	private:
@@ -41,6 +47,11 @@ namespace Board
 		int mNumAvailableMoves;
 
 		bool mWhitePlayerTurn;
+		bool mWhiteCanMove;
+		bool mBlackCanMove;
+		bool mGameOver;
+
+		std::list<Library::Point> mMoves;
 
 		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
 

@@ -40,6 +40,10 @@ namespace Board
 		mWhiteScore = 2;
 		mBlackScore = 2;
 
+		mGameOver = false;
+		mWhiteCanMove = true;
+		mBlackCanMove = true;
+
 		ComPtr<ID3D11Resource> textureResource;
 		wstring textureName = L"Content\\Textures\\whiteCoin2.png";
 
@@ -66,6 +70,42 @@ namespace Board
 	void Board::Update(const Library::GameTime & gameTime)
 	{
 		UNREFERENCED_PARAMETER(gameTime);
+
+		// Might need to enchance game over rules
+		if (mNumAvailableMoves == 0)
+		{
+			if (mWhitePlayerTurn)
+			{
+				mWhiteCanMove = false;
+
+			}
+			else
+			{
+				mBlackCanMove = false;
+			}
+
+			if (mWhiteCanMove || mBlackCanMove)
+			{
+				mWhitePlayerTurn = !mWhitePlayerTurn;
+			}
+		}
+		else
+		{
+			if (mWhitePlayerTurn)
+			{
+				mWhiteCanMove = true;
+
+			}
+			else
+			{
+				mBlackCanMove = true;
+			}
+		}
+
+		if (!mWhiteCanMove && !mBlackCanMove)
+		{
+			mGameOver = true;
+		}
 	}
 
 	void Board::Draw(const Library::GameTime & gameTime)
@@ -173,6 +213,8 @@ namespace Board
 	{
 		mNumAvailableMoves = 0;
 
+		mMoves.empty();
+
 		for (int row = 0; row < 8; row++)
 		{
 			for (int col = 0; col < 8; col++)
@@ -185,6 +227,7 @@ namespace Board
 						{
 							mAvailableMoves[col][row] = 1;
 							mNumAvailableMoves++;
+							mMoves.emplace_back(Point(col, row));
 						}
 						else
 						{
@@ -202,6 +245,11 @@ namespace Board
 				}
 			}
 		}
+	}
+
+	std::list<Library::Point> Board::GetMoves()
+	{
+		return mMoves;
 	}
 
 	int Board::NumberOfAvailableMoves()
@@ -768,5 +816,9 @@ namespace Board
 	void Board::SetWhitePlayerTurn(bool flag)
 	{
 		mWhitePlayerTurn = flag;
+	}
+	bool Board::IsGameOver()
+	{
+		return mGameOver;
 	}
 }

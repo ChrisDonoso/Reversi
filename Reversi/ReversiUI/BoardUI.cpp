@@ -91,7 +91,7 @@ namespace Board
 
 		mBoard->CheckForAvailableMoves();
 
-		if (mBoard->NumberOfAvailableMoves() == 0)
+		/*if (mBoard->NumberOfAvailableMoves() == 0)
 		{
 			if (mBoard->GetWhitePlayerTurn())
 			{
@@ -119,7 +119,7 @@ namespace Board
 			{
 				mBlackCanMove = true;
 			}
-		}
+		}*/
 
 		// Select start node
 		if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
@@ -183,7 +183,7 @@ namespace Board
 
 		wostringstream gameOver;
 
-		if (!mWhiteCanMove && !mBlackCanMove)
+		if (mBoard->IsGameOver())
 		{
 			if (mBoard->GetWhiteScore() > mBoard->GetBlackScore())
 			{
