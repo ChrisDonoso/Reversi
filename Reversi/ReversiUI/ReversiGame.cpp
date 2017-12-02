@@ -141,8 +141,8 @@ namespace Reversi
 
 		mBoardUI->SetAvailableMoves(mBoard);
 		
-		/*if (mBoard->GetWhitePlayerTurn())
-		{*/
+		if (mBoard->GetWhitePlayerTurn())
+		{
 			//mBoard->CheckForAvailableMoves();
 
 			if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
@@ -156,8 +156,8 @@ namespace Reversi
 				{
 					if (mBoard->IsValidMove(xpos, ypos))
 					{
-						mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
-						//mBoard->SetWhitePlayerTurn(false);
+						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
+						mBoard->SetWhitePlayerTurn(false);
 
 						//mBoard->CheckForAvailableMoves();
 					}
@@ -169,38 +169,38 @@ namespace Reversi
 					// Check for valid move.
 				}
 			}
-		//}
-		//else
-		//{
-		//	/*for (auto& move : mBoard->GetMoves())
-		//	{
-		//		int x = move.X;
-		//		int y = move.Y;
+		}
+		else
+		{
+			/*for (auto& move : mBoard->GetMoves())
+			{
+				int x = move.X;
+				int y = move.Y;
 
-		//		UNREFERENCED_PARAMETER(x);
-		//		UNREFERENCED_PARAMETER(y);
-		//	}*/
+				UNREFERENCED_PARAMETER(x);
+				UNREFERENCED_PARAMETER(y);
+			}*/
 
-		//	mBoard->CheckForAvailableMoves();
+			mBoard->CheckForAvailableMoves();
 
-		//	clock_t timer = clock();
+			clock_t timer = clock();
 
-		//	while (clock() - timer < TWO_SECONDS)
-		//	{
+			while (clock() - timer < TWO_SECONDS)
+			{
 
-		//	}
-		//	/*if (clock() - timer >= THREE_SECONDS)
-		//	{*/
+			}
+			/*if (clock() - timer >= THREE_SECONDS)
+			{*/
 
-		//	std::weak_ptr<Board> board = mBoard;
+			//std::weak_ptr<Board> board = mBoard;
 
-		//	std::pair<int, int> move = GetBestMove(board, false, 1);
-		//	
-		//	mBoard->FlipPieces(move.second, move.first, true);
+			std::pair<int, int> move = GetBestMove(mBoard, false, 1);
+			
+			mBoard->FlipPieces(move.second, move.first, true);
 
-		//	mBoard->SetWhitePlayerTurn(true);
-		//	//}
-		//}
+			mBoard->SetWhitePlayerTurn(true);
+			//}
+		}
 
 		mBoardUI->SetWhiteScore(mBoard->GetWhiteScore());
 		mBoardUI->SetBlackScore(mBoard->GetBlackScore());
@@ -293,14 +293,14 @@ namespace Reversi
 	}
 
 	// Driver for MiniMax function
-	std::pair<int, int> ReversiGame::GetBestMove(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth)
+	std::pair<int, int> ReversiGame::GetBestMove(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth)
 	{
 		AIMove move = MiniMax(board, whitePlayer, maxDepth, 0);
 
 		return std::pair<int, int>(move.x, move.y);
 	}
 
-	AIMove ReversiGame::MiniMax(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth)
+	AIMove ReversiGame::MiniMax(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth)
 	{
 		AIMove move;
 
@@ -318,25 +318,25 @@ namespace Reversi
 
 		//std::shared_ptr<Board> boardtemp = board;// .lock();
 
-		if (board.lock()->IsGameOver() || currentDepth == maxDepth)
+		if (board->IsGameOver() || currentDepth == maxDepth)
 		{
 			if (whitePlayer)
 			{
-				move.score = board.lock()->GetWhiteScore();
+				move.score = board->GetWhiteScore();
 			}
 			else
 			{
-				move.score = board.lock()->GetBlackScore();
+				move.score = board->GetBlackScore();
 			}
 
-			std::pair<int, int> lastMoveMade = board.lock()->GetLastMoveMade();
+			std::pair<int, int> lastMoveMade = board->GetLastMoveMade();
 			move.x = lastMoveMade.first;
 			move.y = lastMoveMade.second;
 
 			return move;
 		}
 
-		if (board.lock()->GetWhitePlayerTurn() == whitePlayer)
+		if (board->GetWhitePlayerTurn() == whitePlayer)
 		{
 			bestMove.score = -INFINITY2;
 		}
@@ -346,18 +346,19 @@ namespace Reversi
 		}
 
 		// Go through each move
-		for (auto& availableMove : board.lock()->GetMoves())
+		for (auto& availableMove : board->GetMoves())
 		{
-			std::weak_ptr<Board> newBoard = board;
+			std::shared_ptr<Board> newBoard = make_shared<Board>(*board);
+			//std::weak_ptr<Board> newBoard = board;
 
 			//newBoard.lock()->SetDraw(false);
-			newBoard.lock()->Evaluate(availableMove.X, availableMove.Y);
+			newBoard->Evaluate(availableMove.X, availableMove.Y);
 			//newBoard.lock()->FlipPieces(availableMove.X, availableMove.Y, true);
 
-			move = MiniMax(newBoard.lock(), !whitePlayer, maxDepth, currentDepth + 1);
+			move = MiniMax(newBoard, !whitePlayer, maxDepth, currentDepth + 1);
 
 			// Update the best score
-			if (board.lock()->GetWhitePlayerTurn() == whitePlayer)
+			if (board->GetWhitePlayerTurn() == whitePlayer)
 			{
 				if (move.score > bestMove.score)
 				{

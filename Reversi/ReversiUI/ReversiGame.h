@@ -39,9 +39,9 @@ namespace Reversi
 
 	private:
 		void Exit();
-		std::pair<int, int> GetBestMove(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth);
+		std::pair<int, int> GetBestMove(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth);
 		//Point GetBestMove();
-		AIMove MiniMax(std::weak_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth);
+		AIMove MiniMax(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth);
 
 		static const DirectX::XMVECTORF32 BackgroundColor;
 
