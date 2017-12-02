@@ -143,8 +143,6 @@ namespace Reversi
 		
 		if (mBoard->GetWhitePlayerTurn())
 		{
-			//mBoard->CheckForAvailableMoves();
-
 			if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
 			{
 				int xpos = (mMouse->X() - 120) / 70; // Might need to change the 3
@@ -158,6 +156,7 @@ namespace Reversi
 					{
 						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
 						mBoard->SetWhitePlayerTurn(false);
+						mBoardUI->SetWhitePlayerTurn(false);
 
 						//mBoard->CheckForAvailableMoves();
 					}
@@ -200,6 +199,7 @@ namespace Reversi
 			mBoard->SetAIMove(move.first, move.second);
 
 			mBoard->SetWhitePlayerTurn(true);
+			mBoardUI->SetWhitePlayerTurn(true);
 			//}
 		}
 

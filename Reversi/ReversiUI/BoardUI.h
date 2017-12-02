@@ -19,6 +19,7 @@ namespace Reversi
 		void SetAvailableMoves(std::shared_ptr<Board> board);
 		void SetWhiteScore(int score);
 		void SetBlackScore(int score);
+		void SetWhitePlayerTurn(bool flag);
 		void SetGameOver(std::shared_ptr<Board> board);
 
 	private:
@@ -28,6 +29,7 @@ namespace Reversi
 		int mWhiteScore;
 		int mBlackScore;
 
+		bool mWhitePlayerTurn;
 		bool mGameOver;
 
 		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
