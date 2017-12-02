@@ -93,13 +93,13 @@ namespace Reversi
 			{
 				if (mBoard[col][row] == '-')
 				{
-					/*if (CheckForAdjacentPiece(row, col))
+					/*if (CheckForAdjacentPiece(col, row))
 					{*/
 						if (FlipPieces(row, col, false))
 						{
 							mAvailableMoves[col][row] = 1;
 							mNumAvailableMoves++;
-							mMoves.emplace_back(Point(col, row));
+							mMoves.emplace_back(Point(row, col));
 						}
 						else
 						{
@@ -143,7 +143,7 @@ namespace Reversi
 		}
 
 		// Checks for piece to the left
-		if (y > 0)
+		if (x > 0)
 		{
 			if (mBoard[y][x - 1] == opponentPiece)
 			{
@@ -161,7 +161,7 @@ namespace Reversi
 		}
 
 		// Checks for piece above
-		if (x > 0)
+		if (y > 0)
 		{
 			if (mBoard[y - 1][x] == opponentPiece)
 			{
@@ -170,7 +170,7 @@ namespace Reversi
 		}
 
 		// Checks for piece to the upper right
-		if (x > 0 && y < 8)
+		if (x < 7 && y > 0)
 		{
 			if (mBoard[y - 1][x + 1] == opponentPiece)
 			{
@@ -179,7 +179,7 @@ namespace Reversi
 		}
 
 		// Checks for piece to the right
-		if (y < 8)
+		if (x < 7)
 		{
 			if (mBoard[y][x + 1] == opponentPiece)
 			{
@@ -188,7 +188,7 @@ namespace Reversi
 		}
 
 		// Checks for piece to the bottom right
-		if (x < 8 && y < 8)
+		if (x < 7 && y < 7)
 		{
 			if (mBoard[y + 1][x + 1] == opponentPiece)
 			{
@@ -197,7 +197,7 @@ namespace Reversi
 		}
 
 		// Checks for piece below
-		if (x < 8)
+		if (y < 7)
 		{
 			if (mBoard[y + 1][x] == opponentPiece)
 			{
@@ -206,7 +206,7 @@ namespace Reversi
 		}
 
 		// Checks for piece to the bottom left
-		if (x > 0 && y < 8)
+		if (x > 0 && y < 7)
 		{
 			if (mBoard[y + 1][x - 1] == opponentPiece)
 			{
@@ -216,11 +216,6 @@ namespace Reversi
 
 		return false;
 	}
-
-	/*bool Board::CheckForClosingPiece(int x, int y)
-	{
-		return false;
-	}*/
 
 	bool Board::FlipPieces(int x, int y, bool flip)
 	{
@@ -277,32 +272,6 @@ namespace Reversi
 					//return true;
 				}
 
-				//for (int j = y + 2; j < 8; j++)
-				//{
-				//	if (mBoard[j][i] == targetPiece)
-				//	{
-				//		i--;
-				//		j--;
-
-				//		if (flip)
-				//		{
-				//			while (mBoard[j][i] != targetPiece && (i > x && j > y))
-				//			{
-				//				mBoard[j][i] = targetPiece;
-				//				i--;
-				//				j--;
-
-				//				UpdateScore();
-				//			}
-				//		}
-
-				//		closingPiece = true;
-				//		pieceFound = true;
-				//		break;
-				//		//return true;
-				//	}
-				//}
-
 				if (pieceFound)
 				{
 					break;
@@ -348,32 +317,6 @@ namespace Reversi
 					break;
 					//return true;
 				}
-
-				//for (int j = y - 2; j >= 0; j--)
-				//{
-				//	if (mBoard[j][i] == targetPiece)
-				//	{
-				//		i++;
-				//		j++;
-
-				//		if (flip)
-				//		{
-				//			while (mBoard[j][i] != targetPiece && (i < x && j < y))
-				//			{
-				//				mBoard[j][i] = targetPiece;
-				//				i++;
-				//				j++;
-
-				//				UpdateScore();
-				//			}
-				//		}
-
-				//		closingPiece = true;
-				//		pieceFound = true;
-				//		break;
-				//		//return true;
-				//	}
-				//}
 
 				if (pieceFound)
 				{
@@ -421,32 +364,6 @@ namespace Reversi
 					//return true;
 				}
 
-				//for (int j = y - 2; j < 8; j++)
-				//{
-				//	if (mBoard[i][j] == targetPiece)
-				//	{
-				//		i--;
-				//		j++;
-
-				//		if (flip)
-				//		{
-				//			while (mBoard[i][j] != targetPiece && (i > y && j < x))
-				//			{
-				//				mBoard[i][j] = targetPiece;
-				//				i--;
-				//				j++;
-
-				//				UpdateScore();
-				//			}
-				//		}
-
-				//		closingPiece = true;
-				//		pieceFound = true;
-				//		break;
-				//		//return true;
-				//	}
-				//}
-
 				if (pieceFound)
 				{
 					break;
@@ -493,31 +410,6 @@ namespace Reversi
 
 					//return true;
 				}
-				//for (int j = x + 2; j >= 0; j--)
-				//{
-				//	if (mBoard[i][j] == targetPiece)
-				//	{
-				//		i++;
-				//		j--;
-				//		if (flip)
-
-				//		{
-				//			while (mBoard[i][j] != targetPiece && (j > x && i < y))
-				//			{
-				//				mBoard[i][j] = targetPiece;
-				//				i++;
-				//				j--;
-
-				//				UpdateScore();
-				//			}
-				//		}
-
-				//		closingPiece = true;
-				//		pieceFound = true;
-				//		break;
-				//		//return true;
-				//	}
-				//}
 
 				if (pieceFound)
 				{

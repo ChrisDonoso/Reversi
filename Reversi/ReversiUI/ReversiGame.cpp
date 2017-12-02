@@ -158,7 +158,6 @@ namespace Reversi
 					{
 						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
 						mBoard->SetWhitePlayerTurn(false);
-						mBlackSecondMove++;
 
 						//mBoard->CheckForAvailableMoves();
 					}
@@ -306,13 +305,6 @@ namespace Reversi
 	{
 		AIMove move;
 
-		int i = 0;
-
-		if (mBlackSecondMove == 2)
-		{
-			i++;
-		}
-
 		// Initialize AIMove struct for move
 		move.x = -1;
 		move.y = -1;
@@ -325,17 +317,16 @@ namespace Reversi
 		bestMove.y = -1;
 		bestMove.score = -1;
 
-		//std::shared_ptr<Board> boardtemp = board;// .lock();
 
 		if (board->IsGameOver() || currentDepth == maxDepth)
 		{
 			if (whitePlayer)
 			{
-				move.score = board->GetWhiteScore();
+				move.score = board->GetBlackScore();
 			}
 			else
 			{
-				move.score = board->GetBlackScore();
+				move.score = board->GetWhiteScore();
 			}
 
 			std::pair<int, int> lastMoveMade = board->GetLastMoveMade();
@@ -354,15 +345,16 @@ namespace Reversi
 			bestMove.score = INFINITY2;
 		}
 
+		board->CheckForAvailableMoves();
+
 		// Go through each move
 		for (auto& availableMove : board->GetMoves())
 		{
 			std::shared_ptr<Board> newBoard = make_shared<Board>(*board);
-			//std::weak_ptr<Board> newBoard = board;
 
 			//newBoard.lock()->SetDraw(false);
-			newBoard->Evaluate(availableMove.X, availableMove.Y);
-			//newBoard.lock()->FlipPieces(availableMove.X, availableMove.Y, true);
+			//newBoard->Evaluate(availableMove.X, availableMove.Y);
+			newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
 
 			move = MiniMax(newBoard, !whitePlayer, maxDepth, currentDepth + 1);
 
@@ -383,7 +375,6 @@ namespace Reversi
 			}
 		}
 
-		//return AIMove();
 		return bestMove;
 	}
 }
