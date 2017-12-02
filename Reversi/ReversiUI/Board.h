@@ -41,6 +41,7 @@ namespace Reversi
 		std::pair<int, int> GetLastMoveMade();
 		char* GetBoard();
 		int* GetAvailableMoves();
+		void SetAIMove(int x, int y);
 
 	private:
 		//std::vector<std::vector<char>> mBoard;

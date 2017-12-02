@@ -158,6 +158,7 @@ namespace Reversi
 					{
 						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
 						mBoard->SetWhitePlayerTurn(false);
+						mBlackSecondMove++;
 
 						//mBoard->CheckForAvailableMoves();
 					}
@@ -196,7 +197,8 @@ namespace Reversi
 
 			std::pair<int, int> move = GetBestMove(mBoard, false, 1);
 			
-			mBoard->FlipPieces(move.second, move.first, true);
+			mBoard->FlipPieces(move.first, move.second, true);
+			mBoard->SetAIMove(move.first, move.second);
 
 			mBoard->SetWhitePlayerTurn(true);
 			//}
@@ -303,6 +305,13 @@ namespace Reversi
 	AIMove ReversiGame::MiniMax(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth)
 	{
 		AIMove move;
+
+		int i = 0;
+
+		if (mBlackSecondMove == 2)
+		{
+			i++;
+		}
 
 		// Initialize AIMove struct for move
 		move.x = -1;

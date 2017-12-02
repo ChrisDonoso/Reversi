@@ -1083,4 +1083,16 @@ namespace Reversi
 	{
 		return *mAvailableMoves;
 	}
+
+	void Board::SetAIMove(int x, int y)
+	{
+		if (mWhitePlayerTurn)
+		{
+			mBoard[y][x] = 'W';
+		}
+		else
+		{
+			mBoard[y][x] = 'B';
+		}
+	}
 }

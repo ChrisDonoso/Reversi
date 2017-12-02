@@ -45,6 +45,8 @@ namespace Reversi
 
 		static const DirectX::XMVECTORF32 BackgroundColor;
 
+		int mBlackSecondMove;
+
 		bool mWhiteCanMove;
 		bool mBlackCanMove;
 
