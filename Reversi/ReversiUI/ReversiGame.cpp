@@ -96,7 +96,7 @@ namespace Reversi
 
 	void ReversiGame::Update(const GameTime &gameTime)
 	{
-		mBoard->SetDraw(true);
+		//mBoard->SetDraw(true);
 
 		if (mKeyboard->WasKeyPressedThisFrame(Keys::Escape))
 		{
@@ -138,9 +138,11 @@ namespace Reversi
 		// Select start node
 
 		mBoard->CheckForAvailableMoves();
+
+		mBoardUI->SetAvailableMoves(mBoard);
 		
-		if (mBoard->GetWhitePlayerTurn())
-		{
+		/*if (mBoard->GetWhitePlayerTurn())
+		{*/
 			//mBoard->CheckForAvailableMoves();
 
 			if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
@@ -154,8 +156,8 @@ namespace Reversi
 				{
 					if (mBoard->IsValidMove(xpos, ypos))
 					{
-						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
-						mBoard->SetWhitePlayerTurn(false);
+						mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
+						//mBoard->SetWhitePlayerTurn(false);
 
 						//mBoard->CheckForAvailableMoves();
 					}
@@ -167,38 +169,43 @@ namespace Reversi
 					// Check for valid move.
 				}
 			}
-		}
-		else
-		{
-			/*for (auto& move : mBoard->GetMoves())
-			{
-				int x = move.X;
-				int y = move.Y;
+		//}
+		//else
+		//{
+		//	/*for (auto& move : mBoard->GetMoves())
+		//	{
+		//		int x = move.X;
+		//		int y = move.Y;
 
-				UNREFERENCED_PARAMETER(x);
-				UNREFERENCED_PARAMETER(y);
-			}*/
+		//		UNREFERENCED_PARAMETER(x);
+		//		UNREFERENCED_PARAMETER(y);
+		//	}*/
 
-			mBoard->CheckForAvailableMoves();
+		//	mBoard->CheckForAvailableMoves();
 
-			clock_t timer = clock();
+		//	clock_t timer = clock();
 
-			while (clock() - timer < TWO_SECONDS)
-			{
+		//	while (clock() - timer < TWO_SECONDS)
+		//	{
 
-			}
-			/*if (clock() - timer >= THREE_SECONDS)
-			{*/
+		//	}
+		//	/*if (clock() - timer >= THREE_SECONDS)
+		//	{*/
 
-			std::weak_ptr<Board> board = mBoard;
+		//	std::weak_ptr<Board> board = mBoard;
 
-			std::pair<int, int> move = GetBestMove(board, false, 1);
-			
-			mBoard->FlipPieces(move.second, move.first, true);
+		//	std::pair<int, int> move = GetBestMove(board, false, 1);
+		//	
+		//	mBoard->FlipPieces(move.second, move.first, true);
 
-			mBoard->SetWhitePlayerTurn(true);
-			//}
-		}
+		//	mBoard->SetWhitePlayerTurn(true);
+		//	//}
+		//}
+
+		mBoardUI->SetWhiteScore(mBoard->GetWhiteScore());
+		mBoardUI->SetBlackScore(mBoard->GetBlackScore());
+		mBoard->UpdateGameOver();
+		mBoardUI->SetGameOver(mBoard);
 
 		Game::Update(gameTime);
 	}
@@ -343,7 +350,7 @@ namespace Reversi
 		{
 			std::weak_ptr<Board> newBoard = board;
 
-			newBoard.lock()->SetDraw(false);
+			//newBoard.lock()->SetDraw(false);
 			newBoard.lock()->Evaluate(availableMove.X, availableMove.Y);
 			//newBoard.lock()->FlipPieces(availableMove.X, availableMove.Y, true);
 

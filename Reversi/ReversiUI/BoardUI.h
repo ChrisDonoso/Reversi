@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <memory>
 #include <vector>
 
 namespace Reversi
@@ -16,18 +15,20 @@ namespace Reversi
 		virtual void Update(const Library::GameTime& gameTime) override;
 		virtual void Draw(const Library::GameTime& gameTime) override;
 
-		//void SetBoard(std::vector<std::vector<char>> board);// board[8][8]);
-		void SetBoard(std::shared_ptr<Board> board);//char* board);//[][8]);
+		void SetBoard(std::shared_ptr<Board> board);
+		void SetAvailableMoves(std::shared_ptr<Board> board);
 		void SetWhiteScore(int score);
 		void SetBlackScore(int score);
+		void SetGameOver(std::shared_ptr<Board> board);
 
 	private:
-		//std::vector<std::vector<char>> mBoard;
-		//char mBoard[8][8];
 		char *mBoard;
+		int *mAvailableMoves;
 
 		int mWhiteScore;
 		int mBlackScore;
+
+		bool mGameOver;
 
 		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
 

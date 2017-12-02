@@ -16,20 +16,6 @@ namespace Reversi
 
 	void BoardUI::Initialize()
 	{
-		/*mBoard = new char*[8];
-
-		for (int i = 0; i < 8; i++)
-		{
-			mBoard[i] = new char[8];
-		}*/
-
-		/*mBoard.resize(8);
-
-		for (int i = 0; i < 8; i++)
-		{
-			mBoard[i].resize(8);
-		}
-*/
 		ComPtr<ID3D11Resource> textureResource;
 		wstring textureName = L"Content\\Textures\\whiteCoin2.png";
 
@@ -61,54 +47,11 @@ namespace Reversi
 	void BoardUI::Draw(const Library::GameTime & gameTime)
 	{
 		UNREFERENCED_PARAMETER(gameTime);
-		//if (mDraw)
-		//{
+
 		float xpos = 610.0f;
-		float ypos = 510.0f;
+		float ypos = 580.0f; // 510.0f;
 
-		//for (int row = 7; row >= 0; row--)
-		//{
-		//	for (int col = 7; col >= 0; col--)
-		//	{
-		//		if (mBoard[row][col] == 'W')
-		//		{
-		//			SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
-		//			//xpos -= mBoundsBlack.Width + 5.0f;
-		//		}
-		//		else if (mBoard[row][col] == 'B')
-		//		{
-		//			SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
-		//			//xpos -= mBoundsBlack.Width + 5.0f;
-		//		}
-
-		//		xpos -= mBoundsBlack.Width + 5.0f;
-		//	}
-
-		//	// Reset offset for x position
-		//	xpos = 610.0f; // 605
-		//	ypos -= mBoundsWhite.Height + 5.0f;
-		//}
-
-		//ypos = 510.0f;
-
-		//for (int row = 7; row >= 0; row--)
-		//{
-		//	for (int col = 7; col >= 0; col--)
-		//	{
-		//		if (mBoard[row][col] == '-') //mAvailableMoves[row][col] && mBoard[row][col] == '-')
-		//		{
-		//			SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
-		//		}
-
-		//		xpos -= mBoundsAvailable.Width;
-		//	}
-
-		//	// Reset offset for x position
-		//	xpos = 610.0f;
-		//	ypos -= mBoundsAvailable.Height;
-		//}
-
-		for (int i = 0; i < 64; i++)
+		for (int i = 64; i >= 0; i--)
 		{
 			if (mBoard[i] == 'W')
 			{
@@ -124,8 +67,27 @@ namespace Reversi
 			if (i % 8 == 0)
 			{
 				// Reset offset for x position
-				xpos = 610.0f; // 605
+				xpos = 610.0f;
 				ypos -= mBoundsWhite.Height + 5.0f;
+			}
+		}
+
+		ypos = 580.0f;
+
+		for (int i = 64; i >= 0; i--)
+		{
+			if (mAvailableMoves[i] && mBoard[i] == '-')
+			{
+				SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
+			}
+
+			xpos -= mBoundsAvailable.Width;
+
+			if (i % 8 == 0)
+			{
+				// Reset offset for x position
+				xpos = 610.0f;
+				ypos -= mBoundsAvailable.Height;
 			}
 		}
 
@@ -139,48 +101,16 @@ namespace Reversi
 		SpriteManager::DrawString(mSpriteFont14, whiteScore.str().c_str(), XMFLOAT2(685, 20));
 		SpriteManager::DrawString(mSpriteFont14, blackScore.str().c_str(), XMFLOAT2(685, 45));
 		mRenderStateHelper.RestoreAll();
-		//}
 	}
-
-	//void BoardUI::SetBoard(std::vector<std::vector<char>> board)
-	//{
-		/*for (int i = 0; i < 8; i++)
-		{
-			for (int j = 0; j < 8; j++)
-			{
-				mBoard[i][j] = board[i][j];
-			}
-		}*/
-	//}
-
-	//void BoardUI::SetBoard(char ** board);//[][8])
-	//{
-	//	for (int i = 0; i < 8; i++)
-	//	{
-	//		for (int j = 0; j < 8; j++)
-	//		{
-	//			mBoard[i][j] = board[i][j];
-	//		}
-	//	}
-	//}
-
-	//void BoardUI::SetBoard(char * board)
-	//{
-	//	for (int i = 0; i < 8; i++)
-	//	{
-	//		//board[i] = new char[8];
-	//		for (int j = 0; j < 8; j++)
-	//		{
-	//			mBoard[i][j] = board[i][j];
-	//		}
-	//	}
-	//}
 
 	void BoardUI::SetBoard(std::shared_ptr<Board> board)
 	{
-		//char *tempBoard = board->GetBoard();
-		//mBoard = board->GetBoard();
 		mBoard = board->GetBoard();
+	}
+
+	void BoardUI::SetAvailableMoves(std::shared_ptr<Board> board)
+	{
+		mAvailableMoves = board->GetAvailableMoves();
 	}
 
 	void BoardUI::SetWhiteScore(int score)
@@ -191,5 +121,10 @@ namespace Reversi
 	void BoardUI::SetBlackScore(int score)
 	{
 		mBlackScore = score;
+	}
+
+	void BoardUI::SetGameOver(std::shared_ptr<Board> board)
+	{
+		mGameOver = board->IsGameOver();
 	}
 }

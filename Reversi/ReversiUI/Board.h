@@ -18,11 +18,9 @@ namespace Reversi
 	class Board final
 	{
 	public:
-		Board();// Library::Game& game);
+		Board();
 		
 		virtual void Initialize();
-		//virtual void Update(const Library::GameTime& gameTime) override;
-		//virtual void Draw(const Library::GameTime& gameTime) override;
 
 		bool IsValidMove(int x, int y);
 		void CheckForAvailableMoves();
@@ -38,13 +36,11 @@ namespace Reversi
 		bool GetWhitePlayerTurn();
 		void SetWhitePlayerTurn(bool flag);
 		bool IsGameOver();
-		void SetDraw(bool flag);
+		void UpdateGameOver();
 		void SetLastMoveMade(int x, int y);
 		std::pair<int, int> GetLastMoveMade();
 		char* GetBoard();
-
-		//char[8][8] getArray();
-		//std::vector<std::vector<char>> GetBoard();
+		int* GetAvailableMoves();
 
 	private:
 		//std::vector<std::vector<char>> mBoard;
@@ -60,21 +56,9 @@ namespace Reversi
 		bool mWhiteCanMove;
 		bool mBlackCanMove;
 		bool mGameOver;
-		bool mDraw;
 
 		std::list<Library::Point> mMoves;
 
 		std::pair<int, int> mLastMoveMade;
-
-		/*std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
-
-		Library::RenderStateHelper mRenderStateHelper;
-
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
-		Library::Rectangle mBoundsWhite;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mBlackTexture;
-		Library::Rectangle mBoundsBlack;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mAvailableTexture;
-		Library::Rectangle mBoundsAvailable;*/
 	};
 }
