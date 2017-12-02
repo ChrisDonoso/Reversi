@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 
-namespace Board
+namespace Reversi
 {
 	class Board;
 

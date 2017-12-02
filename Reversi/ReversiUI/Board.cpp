@@ -14,23 +14,36 @@ using namespace Library;
 using namespace std;
 using namespace Microsoft::WRL;
 
-namespace Board
+namespace Reversi
 {
-	Board::Board(Library::Game & game) :
+	/*Board::Board(Library::Game & game) :
 		DrawableGameComponent(game), mRenderStateHelper(game), mBoundsWhite(Rectangle::Empty), mBoundsBlack(Rectangle::Empty), mBoundsAvailable(Rectangle::Empty)
 	{
+	}*/
+
+	Board::Board()
+	{
+
 	}
 
 	void Board::Initialize()
 	{
+		//mBoard = new char*[8];
+
+		//mBoard.resize(8);
+
 		for (int i = 0; i < 8; i++)
 		{
+			//mBoard[i] = new char[8];
+			//mBoard[i].resize(8);
+
 			for (int j = 0; j < 8; j++)
 			{
 				mBoard[i][j] = '-';
 			}
 		}
 
+		//mBoard[7][6] = '.';
 		mBoard[3][3] = 'B';
 		mBoard[4][4] = 'B';
 
@@ -44,137 +57,137 @@ namespace Board
 		mWhiteCanMove = true;
 		mBlackCanMove = true;
 
-		ComPtr<ID3D11Resource> textureResource;
-		wstring textureName = L"Content\\Textures\\whiteCoin2.png";
+		//ComPtr<ID3D11Resource> textureResource;
+		//wstring textureName = L"Content\\Textures\\whiteCoin2.png";
 
-		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		//ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
 
-		ComPtr<ID3D11Texture2D> texture;
-		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+		//ComPtr<ID3D11Texture2D> texture;
+		//ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
 
-		mBoundsWhite = TextureHelper::GetTextureBounds(texture.Get());
+		//mBoundsWhite = TextureHelper::GetTextureBounds(texture.Get());
 
-		textureName = L"Content\\Textures\\blackCoin2.png";
-		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
-		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
-		mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
+		//textureName = L"Content\\Textures\\blackCoin2.png";
+		//ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		//ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+		//mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
 
-		textureName = L"Content\\Textures\\AvailableTile.png";
-		ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mAvailableTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
-		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
-		mBoundsAvailable = TextureHelper::GetTextureBounds(texture.Get());
+		//textureName = L"Content\\Textures\\AvailableTile.png";
+		//ThrowIfFailed(CreateWICTextureFromFile(mGame->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mAvailableTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
+		//ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
+		//mBoundsAvailable = TextureHelper::GetTextureBounds(texture.Get());
 
-		mSpriteFont14 = make_unique<SpriteFont>(mGame->Direct3DDevice(), L"Content\\Fonts\\Arial_14_Regular.spritefont");
+		//mSpriteFont14 = make_unique<SpriteFont>(mGame->Direct3DDevice(), L"Content\\Fonts\\Arial_14_Regular.spritefont");
 	}
 
-	void Board::Update(const Library::GameTime & gameTime)
+	//void Board::Update(const Library::GameTime & gameTime)
+	//{
+	//	UNREFERENCED_PARAMETER(gameTime);
+
+	//	// Might need to enchance game over rules
+	//	if (mNumAvailableMoves == 0)
+	//	{
+	//		if (mWhitePlayerTurn)
+	//		{
+	//			mWhiteCanMove = false;
+
+	//		}
+	//		else
+	//		{
+	//			mBlackCanMove = false;
+	//		}
+
+	//		if (mWhiteCanMove || mBlackCanMove)
+	//		{
+	//			mWhitePlayerTurn = !mWhitePlayerTurn;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		if (mWhitePlayerTurn)
+	//		{
+	//			mWhiteCanMove = true;
+
+	//		}
+	//		else
+	//		{
+	//			mBlackCanMove = true;
+	//		}
+	//	}
+
+	//	if (!mWhiteCanMove && !mBlackCanMove)
+	//	{
+	//		mGameOver = true;
+	//	}
+	//}
+
+	/*void Board::Draw(const Library::GameTime & gameTime)
 	{
-		UNREFERENCED_PARAMETER(gameTime);
-
-		// Might need to enchance game over rules
-		if (mNumAvailableMoves == 0)
-		{
-			if (mWhitePlayerTurn)
-			{
-				mWhiteCanMove = false;
-
-			}
-			else
-			{
-				mBlackCanMove = false;
-			}
-
-			if (mWhiteCanMove || mBlackCanMove)
-			{
-				mWhitePlayerTurn = !mWhitePlayerTurn;
-			}
-		}
-		else
-		{
-			if (mWhitePlayerTurn)
-			{
-				mWhiteCanMove = true;
-
-			}
-			else
-			{
-				mBlackCanMove = true;
-			}
-		}
-
-		if (!mWhiteCanMove && !mBlackCanMove)
-		{
-			mGameOver = true;
-		}
-	}
-
-	void Board::Draw(const Library::GameTime & gameTime)
-	{
-		UNREFERENCED_PARAMETER(gameTime);
+		UNREFERENCED_PARAMETER(gameTime);*/
 
 		// Offsets for grid placement
 		//float xpos = 398.0f;// = //398.0f; // 605
 		//float ypos = 511.0f; // 510
 
-		if (mDraw)
-		{
-			float xpos = 610.0f;
-			float ypos = 510.0f;
+		//if (mDraw)
+		//{
+		//	float xpos = 610.0f;
+		//	float ypos = 510.0f;
 
-			for (int row = 7; row >= 0; row--)
-			{
-				for (int col = 7; col >= 0; col--)
-				{
-					if (mBoard[row][col] == 'W')
-					{
-						SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
-						//xpos -= mBoundsBlack.Width + 5.0f;
-					}
-					else if (mBoard[row][col] == 'B')
-					{
-						SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
-						//xpos -= mBoundsBlack.Width + 5.0f;
-					}
+		//	for (int row = 7; row >= 0; row--)
+		//	{
+		//		for (int col = 7; col >= 0; col--)
+		//		{
+		//			if (mBoard[row][col] == 'W')
+		//			{
+		//				SpriteManager::DrawTexture2D(mWhiteTexture.Get(), XMFLOAT2(xpos, ypos));
+		//				//xpos -= mBoundsBlack.Width + 5.0f;
+		//			}
+		//			else if (mBoard[row][col] == 'B')
+		//			{
+		//				SpriteManager::DrawTexture2D(mBlackTexture.Get(), XMFLOAT2(xpos, ypos));
+		//				//xpos -= mBoundsBlack.Width + 5.0f;
+		//			}
 
-					xpos -= mBoundsBlack.Width + 5.0f;
-				}
+		//			xpos -= mBoundsBlack.Width + 5.0f;
+		//		}
 
-				// Reset offset for x position
-				xpos = 610.0f; // 605
-				ypos -= mBoundsWhite.Height + 5.0f;
-			}
+		//		// Reset offset for x position
+		//		xpos = 610.0f; // 605
+		//		ypos -= mBoundsWhite.Height + 5.0f;
+		//	}
 
-			ypos = 510.0f;
+		//	ypos = 510.0f;
 
-			for (int row = 7; row >= 0; row--)
-			{
-				for (int col = 7; col >= 0; col--)
-				{
-					if (mAvailableMoves[row][col] && mBoard[row][col] == '-')
-					{
-						SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
-					}
+		//	for (int row = 7; row >= 0; row--)
+		//	{
+		//		for (int col = 7; col >= 0; col--)
+		//		{
+		//			if (mAvailableMoves[row][col] && mBoard[row][col] == '-')
+		//			{
+		//				SpriteManager::DrawTexture2D(mAvailableTexture.Get(), XMFLOAT2(xpos, ypos));
+		//			}
 
-					xpos -= mBoundsAvailable.Width;
-				}
+		//			xpos -= mBoundsAvailable.Width;
+		//		}
 
-				// Reset offset for x position
-				xpos = 610.0f;
-				ypos -= mBoundsAvailable.Height;
-			}
+		//		// Reset offset for x position
+		//		xpos = 610.0f;
+		//		ypos -= mBoundsAvailable.Height;
+		//	}
 
-			wostringstream whiteScore;
-			wostringstream blackScore;
+		//	wostringstream whiteScore;
+		//	wostringstream blackScore;
 
-			whiteScore << "White: " << mWhiteScore;
-			blackScore << "Black: " << mBlackScore;
+		//	whiteScore << "White: " << mWhiteScore;
+		//	blackScore << "Black: " << mBlackScore;
 
-			mRenderStateHelper.SaveAll();
-			SpriteManager::DrawString(mSpriteFont14, whiteScore.str().c_str(), XMFLOAT2(685, 20));
-			SpriteManager::DrawString(mSpriteFont14, blackScore.str().c_str(), XMFLOAT2(685, 45));
-			mRenderStateHelper.RestoreAll();
-		}
-	}
+		//	mRenderStateHelper.SaveAll();
+		//	SpriteManager::DrawString(mSpriteFont14, whiteScore.str().c_str(), XMFLOAT2(685, 20));
+		//	SpriteManager::DrawString(mSpriteFont14, blackScore.str().c_str(), XMFLOAT2(685, 45));
+		//	mRenderStateHelper.RestoreAll();
+		//}
+	//}
 
 	bool Board::IsValidMove(int x, int y)
 	{
@@ -1024,7 +1037,7 @@ namespace Board
 		{
 			for (int j = x + 2; j < 8; j++)
 			{
-				if (mBoard[y][j] == '-')
+				if (mBoard[y][j] == '.')
 				{
 					break;
 				}
@@ -1171,4 +1184,14 @@ namespace Board
 	{
 		return mLastMoveMade;
 	}
+
+	char * Board::GetBoard()
+	{
+		return *mBoard;
+	}
+
+	/*std::vector<std::vector<char>> Board::GetBoard()
+	{
+		return mBoard;
+	}*/
 }

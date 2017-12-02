@@ -10,18 +10,19 @@ mBlackScore
 
 #include <list>
 #include <Point.h>
+#include <vector>
 //#include <memory>
 
-namespace Board
+namespace Reversi
 {
-	class Board final : public Library::DrawableGameComponent
+	class Board final
 	{
 	public:
-		Board(Library::Game& game);
+		Board();// Library::Game& game);
 		
-		virtual void Initialize() override;
-		virtual void Update(const Library::GameTime& gameTime) override;
-		virtual void Draw(const Library::GameTime& gameTime) override;
+		virtual void Initialize();
+		//virtual void Update(const Library::GameTime& gameTime) override;
+		//virtual void Draw(const Library::GameTime& gameTime) override;
 
 		bool IsValidMove(int x, int y);
 		void CheckForAvailableMoves();
@@ -40,8 +41,14 @@ namespace Board
 		void SetDraw(bool flag);
 		void SetLastMoveMade(int x, int y);
 		std::pair<int, int> GetLastMoveMade();
+		char* GetBoard();
+
+		//char[8][8] getArray();
+		//std::vector<std::vector<char>> GetBoard();
 
 	private:
+		//std::vector<std::vector<char>> mBoard;
+		//char **mBoard;
 		char mBoard[8][8];
 		int mAvailableMoves[8][8];
 
@@ -59,7 +66,7 @@ namespace Board
 
 		std::pair<int, int> mLastMoveMade;
 
-		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
+		/*std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
 
 		Library::RenderStateHelper mRenderStateHelper;
 
@@ -68,6 +75,6 @@ namespace Board
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mBlackTexture;
 		Library::Rectangle mBoundsBlack;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mAvailableTexture;
-		Library::Rectangle mBoundsAvailable;
+		Library::Rectangle mBoundsAvailable;*/
 	};
 }

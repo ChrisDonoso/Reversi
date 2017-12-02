@@ -7,7 +7,7 @@
 
 using namespace Library;
 
-namespace Board
+namespace Reversi
 {
 	NodeReversi::NodeReversi(std::shared_ptr<Board> board)
 	{

@@ -5,7 +5,7 @@
 #include <vector>
 //#include <map>
 
-namespace Board
+namespace Reversi
 {
 	class GraphReversi final
 	{

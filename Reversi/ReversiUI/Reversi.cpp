@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "BoardUI.h"
+#include "ReversiGame.h"
 
 using namespace Library;
-using namespace Board;
+using namespace Reversi;
 using namespace std;
 
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE previousInstance, LPSTR commandLine, int showCommand)
@@ -37,7 +37,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE previousInstance, LPSTR command
 		return reinterpret_cast<void*>(windowHandle);
 	};
 
-	BoardUI game(getWindow, getRenderTargetSize);
+	ReversiGame game(getWindow, getRenderTargetSize);
 	game.UpdateRenderTargetSize();
 	game.Initialize();
 

@@ -3,7 +3,7 @@
 
 using namespace Library;
 
-namespace Board 
+namespace Reversi 
 {
 	/*GraphReversi::GraphReversi()
 	{
