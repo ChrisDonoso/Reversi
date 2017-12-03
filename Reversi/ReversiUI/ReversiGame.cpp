@@ -2,6 +2,8 @@
 #include "ReversiGame.h"
 #include "Board.h"
 #include "BoardUI.h"
+#include "GraphReversi.h"
+#include "NodeReversi.h"
 #include "Point.h"
 
 using namespace std;
@@ -193,7 +195,13 @@ namespace Reversi
 
 			//std::weak_ptr<Board> board = mBoard;
 
-			std::pair<int, int> move = GetBestMove(mBoard, false, 1);
+			mRoot.reset();
+
+			mRoot = make_shared<NodeReversi>(*mBoard);
+
+			//std::pair<int, int> move = GetBestMove(mBoard, false, 1);
+
+			std::pair<int, int> move = GetBestMove(mRoot, 0, true);
 			
 			mBoard->FlipPieces(move.first, move.second, true);
 			mBoard->SetAIMove(move.first, move.second);
@@ -293,16 +301,17 @@ namespace Reversi
 		PostQuitMessage(0);
 	}
 
-	// Driver for MiniMax function
-	std::pair<int, int> ReversiGame::GetBestMove(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth)
+	std::pair<int, int> ReversiGame::GetBestMove(std::shared_ptr<NodeReversi> origin, int depth, bool maximizingPlayer)
 	{
-		AIMove move = MiniMax(board, whitePlayer, maxDepth, 0);
+		AIMove move = MiniMax(origin, depth, maximizingPlayer);
 
 		return std::pair<int, int>(move.x, move.y);
 	}
 
-	AIMove ReversiGame::MiniMax(std::shared_ptr<Board> board, bool whitePlayer, int maxDepth, int currentDepth)
+	AIMove ReversiGame::MiniMax(std::shared_ptr<NodeReversi> root, int depth, bool maximizingPlayer)
 	{
+		shared_ptr<NodeReversi> node = make_shared<NodeReversi>(*root->GetBoard());
+
 		AIMove move;
 
 		// Initialize AIMove struct for move
@@ -317,57 +326,71 @@ namespace Reversi
 		bestMove.y = -1;
 		bestMove.score = -1;
 
-
-		if (board->IsGameOver() || currentDepth == maxDepth)
+		if (node->GetBoard()->IsGameOver() || depth == MAX_DEPTH)
 		{
-			if (whitePlayer)
+			if (maximizingPlayer)
 			{
-				move.score = board->GetBlackScore();
+				//move.score = node->GetBoard()->GetWhiteScore();
+				move.score = node->GetBoard()->GetBlackScore();
 			}
 			else
 			{
-				move.score = board->GetWhiteScore();
+				//move.score = node->GetBoard()->GetBlackScore();
+				move.score = node->GetBoard()->GetWhiteScore();
 			}
 
-			std::pair<int, int> lastMoveMade = board->GetLastMoveMade();
+			std::pair<int, int> lastMoveMade = node->GetBoard()->GetLastMoveMade();
 			move.x = lastMoveMade.first;
 			move.y = lastMoveMade.second;
 
-			return move;
+			return move; 
 		}
 
-		if (board->GetWhitePlayerTurn() == whitePlayer)
+		node->GetBoard()->GetAvailableMoves();
+
+		if (maximizingPlayer)
 		{
 			bestMove.score = -INFINITY2;
-		}
-		else
-		{
-			bestMove.score = INFINITY2;
-		}
 
-		board->CheckForAvailableMoves();
-
-		// Go through each move
-		for (auto& availableMove : board->GetMoves())
-		{
-			std::shared_ptr<Board> newBoard = make_shared<Board>(*board);
-
-			//newBoard.lock()->SetDraw(false);
-			//newBoard->Evaluate(availableMove.X, availableMove.Y);
-			newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
-
-			move = MiniMax(newBoard, !whitePlayer, maxDepth, currentDepth + 1);
-
-			// Update the best score
-			if (board->GetWhitePlayerTurn() == whitePlayer)
+			for (auto& availableMove : node->GetBoard()->GetMoves())
 			{
+				std::shared_ptr<Board> newBoard = make_shared<Board>(*node->GetBoard());
+
+				std::shared_ptr<NodeReversi> child = make_shared<NodeReversi>(*newBoard);
+
+				node->AddChild(child);
+
+				//newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
+				node->GetBoard()->FlipPieces(availableMove.X, availableMove.Y, true);
+
+				move = MiniMax(child, depth + 1, false);
+				//bestMove.score = max(bestMove.score, move.score);
+
 				if (move.score > bestMove.score)
 				{
 					bestMove = move;
 				}
 			}
-			else
+		}
+		else
+		{
+			bestMove.score = INFINITY2;
+
+			for (auto& availableMove : node->GetBoard()->GetMoves())
 			{
+				std::shared_ptr<Board> newBoard = make_shared<Board>(*node->GetBoard());
+
+				std::shared_ptr<NodeReversi> child = make_shared<NodeReversi>(*newBoard);
+
+				node->AddChild(child);
+
+				//newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
+
+				node->GetBoard()->FlipPieces(availableMove.X, availableMove.Y, true);
+
+				move = MiniMax(child, depth + 1, true);
+				//bestMove.score = min(bestMove.score, move.score);
+
 				if (move.score < bestMove.score)
 				{
 					bestMove = move;
@@ -377,4 +400,102 @@ namespace Reversi
 
 		return bestMove;
 	}
+
+	//// Driver for MiniMax function
+	//std::pair<int, int> ReversiGame::GetBestMove(std::shared_ptr<Board> board, bool maximizingPlayer, int maxDepth)
+	//{
+	//	AIMove move = MiniMax(board, maximizingPlayer, maxDepth, 0, INT_MIN, INT_MAX);
+
+	//	return std::pair<int, int>(move.x, move.y);
+	//}
+
+	//AIMove ReversiGame::MiniMax(std::shared_ptr<Board> board, bool maximizingPlayer, int maxDepth, int currentDepth, int alpha, int beta)
+	//{
+	//	AIMove move;
+
+	//	shared_ptr<NodeReversi> node = make_shared<NodeReversi>(board);
+
+	//	// Initialize AIMove struct for move
+	//	move.x = -1;
+	//	move.y = -1;
+	//	move.score = -1;
+
+	//	AIMove bestMove;
+
+	//	// Initialize AIMove struct for bestMove
+	//	bestMove.x = -1;
+	//	bestMove.y = -1;
+	//	bestMove.score = -1;
+
+	//	
+
+
+	//	//if (board->IsGameOver() || currentDepth == maxDepth)
+	//	//{
+	//	//	if (maximizingPlayer)
+	//	//	{
+	//	//		move.score = board->GetBlackScore();
+	//	//	}
+	//	//	else
+	//	//	{
+	//	//		move.score = board->GetWhiteScore();
+	//	//	}
+
+	//	//	std::pair<int, int> lastMoveMade = board->GetLastMoveMade();
+	//	//	move.x = lastMoveMade.first;
+	//	//	move.y = lastMoveMade.second;
+
+	//	//	return move;
+	//	//}
+
+	//	//if (board->GetWhitePlayerTurn() == maximizingPlayer)
+	//	//{
+	//	//	bestMove.score = -INFINITY2;
+	//	//}
+	//	//else
+	//	//{
+	//	//	bestMove.score = INFINITY2;
+	//	//}
+
+	//	//board->CheckForAvailableMoves();
+
+	//	///*for (auto& availableMove : board->GetMoves())
+	//	//{
+	//	//	
+	//	//}*/
+
+	//	//// Go through each move
+	//	//for (auto& availableMove : board->GetMoves())
+	//	//{
+	//	//	std::shared_ptr<Board> newBoard = make_shared<Board>(*board);
+
+	//	//	std::shared_ptr<NodeReversi> child = make_shared<NodeReversi>(newBoard);
+
+	//	//	node->AddChild(child);
+
+	//	//	//newBoard.lock()->SetDraw(false);
+	//	//	//newBoard->Evaluate(availableMove.X, availableMove.Y);
+	//	//	newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
+
+	//	//	move = MiniMax(newBoard, !maximizingPlayer, maxDepth, currentDepth + 1);
+
+	//	//	// Update the best score
+	//	//	if (board->GetWhitePlayerTurn() == maximizingPlayer)
+	//	//	{
+	//	//		if (move.score > bestMove.score)
+	//	//		{
+	//	//			bestMove = move;
+	//	//		}
+	//	//	}
+	//	//	else
+	//	//	{
+	//	//		if (move.score < bestMove.score)
+	//	//		{
+	//	//			bestMove = move;
+	//	//		}
+	//	//	}
+	//	//}
+
+	//	return bestMove;
+	//}
 }

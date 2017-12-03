@@ -3,15 +3,18 @@
 #include "Board.h"
 #include <limits.h>
 
-//#define INFINITY INT_MAX;
+#define INFINITY2 INT_MAX;
 
 using namespace Library;
 
 namespace Reversi
 {
-	NodeReversi::NodeReversi(std::shared_ptr<Board> board)
+	NodeReversi::NodeReversi(Board board)
 	{
-		mBoard = board;
+		mBoard = std::make_shared<Board>(board);
+		mAlpha = -INFINITY2;
+		mBeta = INFINITY2;
+		mValue = INFINITY2;
 		// SET VALUES TO NEG OR POS INFINITY???
 		//mValue = INFINITY;
 	}
@@ -36,6 +39,11 @@ namespace Reversi
 		return mBeta;
 	}
 
+	int NodeReversi::GetDepth()
+	{
+		return mDepth;
+	}
+
 	void NodeReversi::SetValue(int value)
 	{
 		mValue = value;
@@ -49,6 +57,11 @@ namespace Reversi
 	void NodeReversi::SetBeta(int beta)
 	{
 		mBeta = beta;
+	}
+
+	void NodeReversi::SetDepth(int depth)
+	{
+		mDepth = depth;
 	}
 
 	/*const Point & NodeReversi::Location() const
@@ -80,6 +93,11 @@ namespace Reversi
 		return mChildren;
 	}
 
+	void NodeReversi::AddChild(std::shared_ptr<NodeReversi> child)
+	{
+		mChildren.emplace_back(child);
+	}
+
 	std::weak_ptr<NodeReversi> NodeReversi::Parent()
 	{
 		return mParent;
@@ -93,7 +111,12 @@ namespace Reversi
 	void NodeReversi::Reset()
 	{
 		// Reset some variables here?
-		mParent.reset();
+		//mParent.reset();
+
+		for (auto& child : mChildren)
+		{
+			child.reset();
+		}
 	}
 	/*Node *Node::getNext()
 	{
