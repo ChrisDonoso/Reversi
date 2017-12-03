@@ -54,19 +54,16 @@ namespace Reversi
 
 		if (CheckForAdjacentPiece(x, y))
 		{
-			if (FlipPieces(x, y, true))
+			if (FlipPieces(x, y, true, false))
 			{
 				if (mWhitePlayerTurn)
 				{
 					mBoard[y][x] = 'W';
-					//mWhiteScore++;
 				}
 				else
 				{
 					mBoard[y][x] = 'B';
-					//mBlackScore++;
 				}
-				// FlipPieces
 			}
 			else
 			{
@@ -93,27 +90,16 @@ namespace Reversi
 			{
 				if (mBoard[col][row] == '-')
 				{
-					/*if (CheckForAdjacentPiece(col, row))
-					{*/
-						if (FlipPieces(row, col, false))
-						{
-							mAvailableMoves[col][row] = 1;
-							mNumAvailableMoves++;
-							mMoves.emplace_back(Point(row, col));
-						}
-						else
-						{
-							mAvailableMoves[col][row] = 0;
-						}
-					//} 
-					/*if (CheckForAdjacentPiece(row, col))
+					if (FlipPieces(row, col, false, false))
 					{
-						mAvailableMoves[row][col] = 1;
+						mAvailableMoves[col][row] = 1;
+						mNumAvailableMoves++;
+						mMoves.emplace_back(Point(row, col));
 					}
 					else
 					{
-						mAvailableMoves[row][col] = 0;
-					}*/
+						mAvailableMoves[col][row] = 0;
+					}
 				}
 			}
 		}
@@ -217,7 +203,7 @@ namespace Reversi
 		return false;
 	}
 
-	bool Board::FlipPieces(int x, int y, bool flip)
+	bool Board::FlipPieces(int x, int y, bool flip, bool changePlayerTurn)
 	{
 		char targetPiece;
 		char opponentPiece;
@@ -575,320 +561,12 @@ namespace Reversi
 			}
 		}
 
+		if (changePlayerTurn)
+		{
+			mWhitePlayerTurn = !mWhitePlayerTurn;
+		}
+
 		return closingPiece;
-	}
-
-	void Board::Evaluate(int x, int y)
-	{
-		char targetPiece;
-		char opponentPiece;
-		bool closingPiece = false;
-		bool pieceFound = false;
-		int k = 0;
-
-		if (mWhitePlayerTurn)
-		{
-			targetPiece = 'W';
-			opponentPiece = 'B';
-		}
-		else
-		{
-			targetPiece = 'B';
-			opponentPiece = 'W';
-		}
-
-		// Check for diagonals
-		// Lower-Right Diagonal
-		if (mBoard[y + 1][x + 1] == opponentPiece)
-		{
-			k = y + 2;
-
-			for (int i = x + 2; i < 8; i++)
-			{
-				if (mBoard[k][i] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[k][i] == targetPiece)
-				{
-					i--;
-					k--;
-
-					while (mBoard[k][i] != targetPiece && (i > x && k > y))
-					{
-						i--;
-						k--;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					pieceFound = true;
-					break;
-					//return true;
-				}
-
-				if (pieceFound)
-				{
-					break;
-				}
-
-				k++;
-			}
-		}
-
-		pieceFound = false;
-
-		// Upper-Left Diagonal
-		if (mBoard[y - 1][x - 1] == opponentPiece)
-		{
-			k = y - 2;
-
-			for (int i = x - 2; i >= 0; i--)
-			{
-				if (mBoard[k][i] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[k][i] == targetPiece)
-				{
-					i++;
-					k++;
-
-					while (mBoard[k][i] != targetPiece && (i < x && k < y))
-					{
-						i++;
-						k++;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					pieceFound = true;
-					break;
-					//return true;
-				}
-
-				if (pieceFound)
-				{
-					break;
-				}
-
-				k--;
-			}
-		}
-
-		pieceFound = false;
-
-		// Lower-Left Diagonal
-		if (mBoard[y + 1][x - 1] == opponentPiece)
-		{
-			k = x - 2;
-
-			for (int i = y + 2; i < 8; i++)
-			{
-				if (mBoard[i][k] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[i][k] == targetPiece)
-				{
-					i--;
-					k++;
-
-					while (mBoard[i][k] != targetPiece && (i > y && k < x))
-					{
-						i--;
-						k++;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					pieceFound = true;
-					break;
-					//return true;
-				}
-
-				if (pieceFound)
-				{
-					break;
-				}
-
-				k--;
-			}
-		}
-
-		pieceFound = false;
-
-		// Upper-Right Diagonal
-		if (mBoard[y - 1][x + 1] == opponentPiece)
-		{
-			k = x + 2;
-
-			for (int i = y - 2; i >= 0; i--)
-			{
-				if (mBoard[i][k] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[i][k] == targetPiece)
-				{
-					i++;
-					k--;
-
-					while (mBoard[i][k] != targetPiece && (k > x && i < y))
-					{
-						i++;
-						k--;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					pieceFound = true;
-					break;
-
-					//return true;
-				}
-
-				if (pieceFound)
-				{
-					break;
-				}
-
-				k++;
-			}
-		}
-
-		/// LOOK AT HORIZONTAL
-		// Check horizontal
-		if (mBoard[y][x - 1] == opponentPiece)
-		{
-			for (int j = x - 2; j >= 0; j--)
-			{
-				if (mBoard[y][j] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[y][j] == targetPiece)
-				{
-					j++;
-
-					while (mBoard[y][j] != targetPiece && j < x)
-					{
-						j++;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					break;
-					//return true;
-				}
-			}
-		}
-
-		if (mBoard[y][x + 1] == opponentPiece)
-		{
-			for (int j = x + 2; j < 8; j++)
-			{
-				if (mBoard[y][j] == '.')
-				{
-					break;
-				}
-
-				if (mBoard[y][j] == targetPiece)
-				{
-					j--;
-
-					while (mBoard[y][j] != targetPiece && j > x)
-					{
-						j--;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					break;
-					//return true;
-				}
-			}
-		}
-
-		// Check vertical
-		if (mBoard[y - 1][x] == opponentPiece)
-		{
-			for (int i = y - 2; i >= 0; i--)
-			{
-				if (mBoard[i][x] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[i][x] == targetPiece)
-				{
-					i++;
-
-					while (mBoard[i][x] != targetPiece && i < y)
-					{
-						i++;
-
-						UpdateScore();
-					}
-
-					closingPiece = true;
-					break;
-					//return true;
-				}
-			}
-		}
-
-		if (mBoard[y + 1][x] == opponentPiece)
-		{
-			for (int i = y + 2; i < 8; i++)
-			{
-				if (mBoard[i][x] == '-')
-				{
-					break;
-				}
-
-				if (mBoard[i][x] == targetPiece)
-				{
-					i--;
-
-					while (mBoard[i][x] != targetPiece &&  i > y)
-					{
-						i--;
-
-						UpdateScore();
-					}
-				
-					closingPiece = true;
-					break;
-					//return true;
-				}
-			}
-		}
-
-		if (closingPiece)
-		{
-			SetLastMoveMade(x, y);
-
-			if (mWhitePlayerTurn)
-			{
-				mWhiteScore++;
-			}
-			else
-			{
-				mBlackScore++;
-			}
-		}
 	}
 
 	void Board::UpdateScore()

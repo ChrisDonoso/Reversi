@@ -7,7 +7,6 @@
 #define INFINITY2 INT_MAX;
 #define TWO_SECONDS 2000
 const static int MAX_DEPTH = 1;
-//#define MAX_DEPTH 1;
 
 struct AIMove {
 	int x;
@@ -18,14 +17,12 @@ struct AIMove {
 namespace Library
 {
 	class KeyboardComponent;
-	//class Point;
 }
 
 namespace Reversi
 {
 	class Board;
 	class BoardUI;
-	//class GraphReversi;
 	class NodeReversi;
 
 	class ReversiGame : public Library::Game
@@ -43,11 +40,7 @@ namespace Reversi
 	private:
 		void Exit();
 		std::pair<int, int> GetBestMove(std::shared_ptr<NodeReversi> origin, int depth, bool maximizingPlayer);
-		AIMove MiniMax(std::shared_ptr<NodeReversi> root, int depth, bool maximizingPlayer);
-
-		//std::pair<int, int> GetBestMove(std::shared_ptr<Board> board, bool maximizingPlayer, int maxDepth);
-		//Point GetBestMove();
-		//AIMove MiniMax(std::shared_ptr<Board> board, bool maximizingPlayer, int maxDepth, int currentDepth, int alpha, int beta);
+		AIMove MiniMax(std::shared_ptr<NodeReversi> root, int depth, int alpha, int beta, bool maximizingPlayer);
 
 		static const DirectX::XMVECTORF32 BackgroundColor;
 
@@ -60,13 +53,12 @@ namespace Reversi
 
 		std::shared_ptr<Board> mBoard;
 		std::shared_ptr<NodeReversi> mRoot;
-		//std::shared_ptr<GraphReversi> mGraph;
 
 		std::shared_ptr<DirectX::SpriteFont> mSpriteFont14;
 
 		Library::RenderStateHelper mRenderStateHelper;
 
-		//Library::Rectangle mSpriteBounds;
+		std::unique_ptr<DirectX::SoundEffect> mMusic;
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mWhiteTexture;
 		Library::Rectangle mBoundsWhite;

@@ -11,7 +11,6 @@ mBlackScore
 #include <list>
 #include <Point.h>
 #include <vector>
-//#include <memory>
 
 namespace Reversi
 {
@@ -27,9 +26,7 @@ namespace Reversi
 		std::list<Library::Point> GetMoves();
 		int NumberOfAvailableMoves();
 		bool CheckForAdjacentPiece(int x, int y);
-		//bool CheckForClosingPiece(int x, int y);
-		bool FlipPieces(int x, int y, bool flip);
-		void Evaluate(int x, int y);
+		bool FlipPieces(int x, int y, bool flip, bool changePlayerTurn);
 		void UpdateScore();
 		int GetWhiteScore();
 		int GetBlackScore();
@@ -44,8 +41,6 @@ namespace Reversi
 		void SetAIMove(int x, int y);
 
 	private:
-		//std::vector<std::vector<char>> mBoard;
-		//char **mBoard;
 		char mBoard[8][8];
 		int mAvailableMoves[8][8];
 

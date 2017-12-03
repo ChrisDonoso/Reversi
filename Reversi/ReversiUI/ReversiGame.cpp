@@ -2,7 +2,6 @@
 #include "ReversiGame.h"
 #include "Board.h"
 #include "BoardUI.h"
-#include "GraphReversi.h"
 #include "NodeReversi.h"
 #include "Point.h"
 
@@ -22,17 +21,6 @@ namespace Reversi
 
 	void ReversiGame::Initialize()
 	{
-		// Load a texture
-		/*ComPtr<ID3D11Resource> textureResource;
-		wstring textureName = L"Content\\Textures\\WhiteDisk.png";
-
-		ThrowIfFailed(CreateWICTextureFromFile(Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mWhiteTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
-
-		ComPtr<ID3D11Texture2D> texture;
-		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");*/
-
-
-
 		SpriteManager::Initialize(*this);
 		BlendStates::Initialize(mDirect3DDevice.Get());
 
@@ -44,16 +32,17 @@ namespace Reversi
 		mComponents.push_back(mMouse);
 		mServices.AddService(MouseComponent::TypeIdClass(), mMouse.get());
 
+		auto audioEngine = make_shared<AudioEngineComponent>(*this);
+		assert(audioEngine != nullptr);
+		mComponents.push_back(audioEngine);
+		mServices.AddService(AudioEngineComponent::TypeIdClass(), audioEngine.get());
+
 		mBoardUI = make_shared<BoardUI>(*this);
 		mComponents.push_back(mBoardUI);
 		
 		mBoard = make_shared<Board>();
 
-		/*mBoard = make_shared<Board>(*this);
-		mComponents.push_back(mBoard);*/
-
-		//mWhiteCanMove = true;
-		//mBlackCanMove = true;
+		mMusic = make_unique<SoundEffect>(audioEngine->AudioEngine().get(), L"Content\\Sound\\Patakas-World.wav");
 
 		ComPtr<ID3D11Resource> textureResource;
 		wstring textureName = L"Content\\Textures\\Tile.png";
@@ -67,24 +56,13 @@ namespace Reversi
 
 		mSpriteFont14 = make_unique<SpriteFont>(this->Direct3DDevice(), L"Content\\Fonts\\Arial_14_Regular.spritefont");
 
-		/*textureName = L"Content\\Textures\\blackCoin.png";
-		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mBlackTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
-		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
-		mBoundsBlack = TextureHelper::GetTextureBounds(texture.Get());
-
-		textureName = L"Content\\Textures\\Tile.png";
-		ThrowIfFailed(CreateWICTextureFromFile(this->Direct3DDevice(), textureName.c_str(), textureResource.ReleaseAndGetAddressOf(), mTileTexture.ReleaseAndGetAddressOf()), "CreateWICTextureFromFile() failed.");
-		ThrowIfFailed(textureResource.As(&texture), "Invalid ID3D11Resource returned from CreateWICTextureFromFile. Should be a ID3D11Texture2D.");
-		mBoundsTile = TextureHelper::GetTextureBounds(texture.Get());*/
-
 		mBoard->Initialize();
+
 		mBoardUI->Initialize();
 		mBoardUI->SetBoard(mBoard);
-		//mBoardUI->SetBoard(mBoard->GetBoard());
 		mBoardUI->SetWhiteScore(mBoard->GetWhiteScore());
 		mBoardUI->SetBlackScore(mBoard->GetBlackScore());
-		//mBoardUI->SetWhiteScore(2)
-		//mBoard->SetWhitePlayerTurn(false);
+
 		Game::Initialize();
 	}
 
@@ -98,46 +76,16 @@ namespace Reversi
 
 	void ReversiGame::Update(const GameTime &gameTime)
 	{
-		//mBoard->SetDraw(true);
-
 		if (mKeyboard->WasKeyPressedThisFrame(Keys::Escape))
 		{
 			Exit();
 		}
 
-		//mBoard->CheckForAvailableMoves();
-
-		/*if (mBoard->NumberOfAvailableMoves() == 0)
+		// Loops the background music
+		if (!mMusic->IsInUse())
 		{
-			if (mBoard->GetWhitePlayerTurn())
-			{
-				mWhiteCanMove = false;
-
-			}
-			else
-			{
-				mBlackCanMove = false;
-			}
-
-			if (mWhiteCanMove || mBlackCanMove)
-			{
-				mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
-			}
+			mMusic->Play();
 		}
-		else
-		{
-			if (mBoard->GetWhitePlayerTurn())
-			{
-				mWhiteCanMove = true;
-
-			}
-			else
-			{
-				mBlackCanMove = true;
-			}
-		}*/
-
-		// Select start node
 
 		mBoard->CheckForAvailableMoves();
 
@@ -147,10 +95,8 @@ namespace Reversi
 		{
 			if (mMouse->WasButtonReleasedThisFrame(MouseButtons::Left))
 			{
-				int xpos = (mMouse->X() - 120) / 70; // Might need to change the 3
-				int ypos = (mMouse->Y() - 20) / 70; // Might need to change the 1
-													/*int xMouse = mMouse->X();
-													int yMouse = mMouse->Y();*/
+				int xpos = (mMouse->X() - 120) / 70;
+				int ypos = (mMouse->Y() - 20) / 70;
 
 				if ((xpos >= 0 && xpos < 8) && (ypos >= 0 && ypos < 8))
 				{
@@ -159,62 +105,38 @@ namespace Reversi
 						//mBoard->SetWhitePlayerTurn(!mBoard->GetWhitePlayerTurn());
 						mBoard->SetWhitePlayerTurn(false);
 						mBoardUI->SetWhitePlayerTurn(false);
-
-						//mBoard->CheckForAvailableMoves();
 					}
-					/*if (mGraph.At(xpos, ypos)->Type() != NodeType::Wall)
-					{
-					mStartNode = mGraph.At(xpos, ypos);
-					}*/
-
-					// Check for valid move.
 				}
 			}
 		}
 		else
 		{
-			/*for (auto& move : mBoard->GetMoves())
-			{
-				int x = move.X;
-				int y = move.Y;
-
-				UNREFERENCED_PARAMETER(x);
-				UNREFERENCED_PARAMETER(y);
-			}*/
-
 			mBoard->CheckForAvailableMoves();
 
 			clock_t timer = clock();
 
 			while (clock() - timer < TWO_SECONDS)
 			{
-
+				// WAIT TWO SECONDS SO THAT IT GIVES THE PLAYER A CHANCE TO SEE WHAT HAPPENED
 			}
-			/*if (clock() - timer >= THREE_SECONDS)
-			{*/
-
-			//std::weak_ptr<Board> board = mBoard;
 
 			mRoot.reset();
 
 			mRoot = make_shared<NodeReversi>(*mBoard);
 
-			//std::pair<int, int> move = GetBestMove(mBoard, false, 1);
-
 			std::pair<int, int> move = GetBestMove(mRoot, 0, true);
 			
-			mBoard->FlipPieces(move.first, move.second, true);
+			mBoard->FlipPieces(move.first, move.second, true, false);
 			mBoard->SetAIMove(move.first, move.second);
 
 			mBoard->SetWhitePlayerTurn(true);
 			mBoardUI->SetWhitePlayerTurn(true);
-			//}
 		}
 
 		mBoardUI->SetWhiteScore(mBoard->GetWhiteScore());
 		mBoardUI->SetBlackScore(mBoard->GetBlackScore());
 		mBoard->UpdateGameOver();
-		mBoardUI->SetGameOver(mBoard);
+		mBoardUI->SetGameOver(mBoard->IsGameOver());
 
 		Game::Update(gameTime);
 	}
@@ -228,7 +150,7 @@ namespace Reversi
 		float xpos = 610.0f;
 		float ypos = 510.0f;
 
-		// Draw the graph textures to the screen (Start node, End node, Normal nodes, and Wall nodes)
+		// Draw the Reversi Grid textures to the screen
 		for (int row = 7; row >= 0; row--)
 		{
 			for (int col = 7; col >= 0; col--)
@@ -242,17 +164,6 @@ namespace Reversi
 			xpos = 610.0f;
 			ypos -= mBoundsTile.Height;
 		}
-
-		//mBoardUI->Draw(gameTime);
-
-		// RIGHT HERE IS WHERE WE DRAW THE CONTENTS OF THE BOARD
-		/*for (int row = 0; row < 8; row++)
-		{
-			for (int col = 0; col < 8; col++)
-			{
-				mBoard->Draw();
-			}
-		}*/
 
 		wostringstream gameOver;
 
@@ -301,14 +212,15 @@ namespace Reversi
 		PostQuitMessage(0);
 	}
 
+	// Driver for MiniMax function
 	std::pair<int, int> ReversiGame::GetBestMove(std::shared_ptr<NodeReversi> origin, int depth, bool maximizingPlayer)
 	{
-		AIMove move = MiniMax(origin, depth, maximizingPlayer);
+		AIMove move = MiniMax(origin, depth, INT_MIN, INT_MAX, maximizingPlayer);
 
 		return std::pair<int, int>(move.x, move.y);
 	}
 
-	AIMove ReversiGame::MiniMax(std::shared_ptr<NodeReversi> root, int depth, bool maximizingPlayer)
+	AIMove ReversiGame::MiniMax(std::shared_ptr<NodeReversi> root, int depth, int alpha, int beta, bool maximizingPlayer)
 	{
 		shared_ptr<NodeReversi> node = make_shared<NodeReversi>(*root->GetBoard());
 
@@ -330,13 +242,11 @@ namespace Reversi
 		{
 			if (maximizingPlayer)
 			{
-				//move.score = node->GetBoard()->GetWhiteScore();
-				move.score = node->GetBoard()->GetBlackScore();
+				move.score = node->GetBoard()->GetWhiteScore();
 			}
 			else
 			{
-				//move.score = node->GetBoard()->GetBlackScore();
-				move.score = node->GetBoard()->GetWhiteScore();
+				move.score = node->GetBoard()->GetBlackScore();
 			}
 
 			std::pair<int, int> lastMoveMade = node->GetBoard()->GetLastMoveMade();
@@ -346,7 +256,7 @@ namespace Reversi
 			return move; 
 		}
 
-		node->GetBoard()->GetAvailableMoves();
+		node->GetBoard()->CheckForAvailableMoves();
 
 		if (maximizingPlayer)
 		{
@@ -360,17 +270,25 @@ namespace Reversi
 
 				node->AddChild(child);
 
-				//newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
-				node->GetBoard()->FlipPieces(availableMove.X, availableMove.Y, true);
+				child->GetBoard()->FlipPieces(availableMove.X, availableMove.Y, true, true);
 
-				move = MiniMax(child, depth + 1, false);
-				//bestMove.score = max(bestMove.score, move.score);
+				move = MiniMax(child, depth + 1, alpha, beta, false);
 
 				if (move.score > bestMove.score)
 				{
 					bestMove = move;
 				}
+
+				alpha = max(alpha, child->GetAlpha());
+
+				// Alpha Beta Pruning
+				if (beta <= alpha)
+				{
+					break;
+				}
 			}
+
+			return bestMove;
 		}
 		else
 		{
@@ -384,118 +302,25 @@ namespace Reversi
 
 				node->AddChild(child);
 
-				//newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
+				child->GetBoard()->FlipPieces(availableMove.X, availableMove.Y, true, true);
 
-				node->GetBoard()->FlipPieces(availableMove.X, availableMove.Y, true);
-
-				move = MiniMax(child, depth + 1, true);
-				//bestMove.score = min(bestMove.score, move.score);
+				move = MiniMax(child, depth + 1, alpha, beta, true);
 
 				if (move.score < bestMove.score)
 				{
 					bestMove = move;
 				}
+
+				beta = min(beta, child->GetBeta());
+
+				// Alpha Beta Pruning
+				if (beta <= alpha)
+				{
+					break;
+				}
 			}
+
+			return bestMove;
 		}
-
-		return bestMove;
 	}
-
-	//// Driver for MiniMax function
-	//std::pair<int, int> ReversiGame::GetBestMove(std::shared_ptr<Board> board, bool maximizingPlayer, int maxDepth)
-	//{
-	//	AIMove move = MiniMax(board, maximizingPlayer, maxDepth, 0, INT_MIN, INT_MAX);
-
-	//	return std::pair<int, int>(move.x, move.y);
-	//}
-
-	//AIMove ReversiGame::MiniMax(std::shared_ptr<Board> board, bool maximizingPlayer, int maxDepth, int currentDepth, int alpha, int beta)
-	//{
-	//	AIMove move;
-
-	//	shared_ptr<NodeReversi> node = make_shared<NodeReversi>(board);
-
-	//	// Initialize AIMove struct for move
-	//	move.x = -1;
-	//	move.y = -1;
-	//	move.score = -1;
-
-	//	AIMove bestMove;
-
-	//	// Initialize AIMove struct for bestMove
-	//	bestMove.x = -1;
-	//	bestMove.y = -1;
-	//	bestMove.score = -1;
-
-	//	
-
-
-	//	//if (board->IsGameOver() || currentDepth == maxDepth)
-	//	//{
-	//	//	if (maximizingPlayer)
-	//	//	{
-	//	//		move.score = board->GetBlackScore();
-	//	//	}
-	//	//	else
-	//	//	{
-	//	//		move.score = board->GetWhiteScore();
-	//	//	}
-
-	//	//	std::pair<int, int> lastMoveMade = board->GetLastMoveMade();
-	//	//	move.x = lastMoveMade.first;
-	//	//	move.y = lastMoveMade.second;
-
-	//	//	return move;
-	//	//}
-
-	//	//if (board->GetWhitePlayerTurn() == maximizingPlayer)
-	//	//{
-	//	//	bestMove.score = -INFINITY2;
-	//	//}
-	//	//else
-	//	//{
-	//	//	bestMove.score = INFINITY2;
-	//	//}
-
-	//	//board->CheckForAvailableMoves();
-
-	//	///*for (auto& availableMove : board->GetMoves())
-	//	//{
-	//	//	
-	//	//}*/
-
-	//	//// Go through each move
-	//	//for (auto& availableMove : board->GetMoves())
-	//	//{
-	//	//	std::shared_ptr<Board> newBoard = make_shared<Board>(*board);
-
-	//	//	std::shared_ptr<NodeReversi> child = make_shared<NodeReversi>(newBoard);
-
-	//	//	node->AddChild(child);
-
-	//	//	//newBoard.lock()->SetDraw(false);
-	//	//	//newBoard->Evaluate(availableMove.X, availableMove.Y);
-	//	//	newBoard->FlipPieces(availableMove.X, availableMove.Y, true);
-
-	//	//	move = MiniMax(newBoard, !maximizingPlayer, maxDepth, currentDepth + 1);
-
-	//	//	// Update the best score
-	//	//	if (board->GetWhitePlayerTurn() == maximizingPlayer)
-	//	//	{
-	//	//		if (move.score > bestMove.score)
-	//	//		{
-	//	//			bestMove = move;
-	//	//		}
-	//	//	}
-	//	//	else
-	//	//	{
-	//	//		if (move.score < bestMove.score)
-	//	//		{
-	//	//			bestMove = move;
-	//	//		}
-	//	//	}
-	//	//}
-
-	//	return bestMove;
-	//}
 }

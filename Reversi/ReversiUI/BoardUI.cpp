@@ -49,7 +49,7 @@ namespace Reversi
 		UNREFERENCED_PARAMETER(gameTime);
 
 		float xpos = 610.0f;
-		float ypos = 580.0f; // 510.0f;
+		float ypos = 580.0f;
 
 		// Draw Disks to screen
 		for (int i = 64; i >= 0; i--)
@@ -133,8 +133,8 @@ namespace Reversi
 		mWhitePlayerTurn = flag;
 	}
 
-	void BoardUI::SetGameOver(std::shared_ptr<Board> board)
+	void BoardUI::SetGameOver(bool gameover)
 	{
-		mGameOver = board->IsGameOver();
+		mGameOver = gameover;
 	}
 }

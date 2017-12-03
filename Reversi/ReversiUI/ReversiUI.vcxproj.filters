@@ -18,6 +18,9 @@
     <Filter Include="Content\Fonts">
       <UniqueIdentifier>{e2b155cf-0140-4e09-a31e-ba1db8e4f3c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Sound">
+      <UniqueIdentifier>{c1573992-683e-406d-882b-d20616a62036}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -30,9 +33,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NodeReversi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphReversi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReversiGame.h">
@@ -53,9 +53,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NodeReversi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphReversi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReversiGame.cpp">
@@ -90,5 +87,10 @@
     <Image Include="Content\Textures\whiteCoin2.png">
       <Filter>Content\Textures</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Content\Sound\Patakas-World.wav">
+      <Filter>Content\Sound</Filter>
+    </Media>
   </ItemGroup>
 </Project>

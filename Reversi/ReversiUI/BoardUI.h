@@ -20,7 +20,7 @@ namespace Reversi
 		void SetWhiteScore(int score);
 		void SetBlackScore(int score);
 		void SetWhitePlayerTurn(bool flag);
-		void SetGameOver(std::shared_ptr<Board> board);
+		void SetGameOver(bool gameover);
 
 	private:
 		char *mBoard;
